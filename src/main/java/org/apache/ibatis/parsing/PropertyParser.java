@@ -18,6 +18,8 @@ package org.apache.ibatis.parsing;
 import java.util.Properties;
 
 /**
+ * 属性解析
+ *
  * @author Clinton Begin
  * @author Kazuki Shimizu
  */
@@ -51,14 +53,20 @@ public class PropertyParser {
   }
 
   public static String parse(String string, Properties variables) {
+    // <2.1> 创建 VariableTokenHandler 对象
     VariableTokenHandler handler = new VariableTokenHandler(variables);
+    // <2.2> 创建 GenericTokenParser 对象
     GenericTokenParser parser = new GenericTokenParser("${", "}", handler);
+    // <2.3> 执行解析
     return parser.parse(string);
   }
 
   private static class VariableTokenHandler implements TokenHandler {
+    // 属性值
     private final Properties variables;
+    // 是否开启 默认的value，默认为false
     private final boolean enableDefaultValue;
+    // 默认分隔符 :
     private final String defaultValueSeparator;
 
     private VariableTokenHandler(Properties variables) {
@@ -73,8 +81,11 @@ public class PropertyParser {
 
     @Override
     public String handleToken(String content) {
+      // 如果 Properties 属性不为 null的时候，才进行处理
       if (variables != null) {
+        // properties 的 key
         String key = content;
+        // 是否开启 default value
         if (enableDefaultValue) {
           final int separatorIndex = content.indexOf(defaultValueSeparator);
           String defaultValue = null;
@@ -82,10 +93,13 @@ public class PropertyParser {
             key = content.substring(0, separatorIndex);
             defaultValue = content.substring(separatorIndex + defaultValueSeparator.length());
           }
+          // 获取当前的 value，没有返回 defaultValue
           if (defaultValue != null) {
             return variables.getProperty(key, defaultValue);
           }
         }
+        // 如果key存在，则返回对应的 value
+        // ${username} -> admin
         if (variables.containsKey(key)) {
           return variables.getProperty(key);
         }

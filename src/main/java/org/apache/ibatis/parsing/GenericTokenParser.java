@@ -41,6 +41,7 @@ public class GenericTokenParser {
   }
 
   public String parse(String text) {
+    // tip：这里处理的就是 #{} ${}，将数据拼接到里面
     if (text == null || text.isEmpty()) {
       return "";
     }
@@ -84,6 +85,8 @@ public class GenericTokenParser {
           builder.append(src, start, src.length - start);
           offset = src.length;
         } else {
+          // 处理 ${} 返回对于的 value
+          // ${username} -> admin
           builder.append(handler.handleToken(expression.toString()));
           offset = end + closeToken.length();
         }
