@@ -230,8 +230,10 @@ public class XPathParser {
   private Document createDocument(InputSource inputSource) {
     // important: this must only be called AFTER common constructor
     try {
+      // 1> 创建 DocumentBuilderFactory 对象
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+      // 是否严重 xml 文档(dtd 和 xld)
       factory.setValidating(validation);
 
       factory.setNamespaceAware(false);
@@ -239,7 +241,7 @@ public class XPathParser {
       factory.setIgnoringElementContentWhitespace(false);
       factory.setCoalescing(false);
       factory.setExpandEntityReferences(true);
-
+      // 2> 创建 DocumentBuilder 对象
       DocumentBuilder builder = factory.newDocumentBuilder();
       builder.setEntityResolver(entityResolver);
       builder.setErrorHandler(new ErrorHandler() {
@@ -258,6 +260,7 @@ public class XPathParser {
           // NOP
         }
       });
+      // 3> 解析 XML 文件
       return builder.parse(inputSource);
     } catch (Exception e) {
       throw new BuilderException("Error creating document instance.  Cause: " + e, e);
@@ -265,9 +268,11 @@ public class XPathParser {
   }
 
   private void commonConstructor(boolean validation, Properties variables, EntityResolver entityResolver) {
+    // 对 this 属性value 初始化
     this.validation = validation;
     this.entityResolver = entityResolver;
     this.variables = variables;
+    // 初始化 xpath
     XPathFactory factory = XPathFactory.newInstance();
     this.xpath = factory.newXPath();
   }
