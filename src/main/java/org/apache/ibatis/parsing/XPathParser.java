@@ -198,10 +198,19 @@ public class XPathParser {
     return evalNodes(document, expression);
   }
 
+  /**
+   * eval 元素的方法，用于获得 Node 类型的节点的值。
+   *
+   * @param root
+   * @param expression
+   * @return
+   */
   public List<XNode> evalNodes(Object root, String expression) {
     List<XNode> xnodes = new ArrayList<>();
+    // 获取所有node对象
     NodeList nodes = (NodeList) evaluate(expression, root, XPathConstants.NODESET);
     for (int i = 0; i < nodes.getLength(); i++) {
+      // 封装成 xNode 对象
       xnodes.add(new XNode(this, nodes.item(i), variables));
     }
     return xnodes;
@@ -219,6 +228,14 @@ public class XPathParser {
     return new XNode(this, node, variables);
   }
 
+  /**
+   * 获得指定元素或节点的值
+   *
+   * @param expression 表达式
+   * @param root root节点
+   * @param returnType 返回类型
+   * @return
+   */
   private Object evaluate(String expression, Object root, QName returnType) {
     try {
       return xpath.evaluate(expression, root, returnType);
