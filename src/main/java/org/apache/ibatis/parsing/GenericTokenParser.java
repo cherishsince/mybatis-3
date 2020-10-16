@@ -16,11 +16,21 @@
 package org.apache.ibatis.parsing;
 
 /**
+ * 通用的 token 解析
+ *
+ * 注意：这里是解析 ${xxx} 这种
+ *
  * @author Clinton Begin
  */
 public class GenericTokenParser {
 
+  /**
+   * 开始的字符串 ${
+   */
   private final String openToken;
+  /**
+   * 结束字符串 }
+   */
   private final String closeToken;
   private final TokenHandler handler;
 
