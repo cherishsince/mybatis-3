@@ -25,6 +25,10 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
+ * MyBatis DTD的脱机实体解析程序。
+ *
+ * 注意: 加载的是本地的 dtd 文件（.xsd 是遗留下来的，现在不用了）
+ *
  * Offline entity resolver for the MyBatis DTDs.
  *
  * @author Clinton Begin
@@ -41,7 +45,7 @@ public class XMLMapperEntityResolver implements EntityResolver {
   private static final String MYBATIS_MAPPER_DTD = "org/apache/ibatis/builder/xml/mybatis-3-mapper.dtd";
 
   /**
-   * Converts a public DTD into a local one.
+   * 将公共 DTD 转换为本地 DTD。
    *
    * @param publicId
    *          The public id that is what comes after "PUBLIC"
@@ -58,8 +62,10 @@ public class XMLMapperEntityResolver implements EntityResolver {
       if (systemId != null) {
         String lowerCaseSystemId = systemId.toLowerCase(Locale.ENGLISH);
         if (lowerCaseSystemId.contains(MYBATIS_CONFIG_SYSTEM) || lowerCaseSystemId.contains(IBATIS_CONFIG_SYSTEM)) {
+          // 创建 mybatis-3-config.dtd 配置
           return getInputSource(MYBATIS_CONFIG_DTD, publicId, systemId);
         } else if (lowerCaseSystemId.contains(MYBATIS_MAPPER_SYSTEM) || lowerCaseSystemId.contains(IBATIS_MAPPER_SYSTEM)) {
+          // 创建 mybatis-3-mapper.dtd 配置
           return getInputSource(MYBATIS_MAPPER_DTD, publicId, systemId);
         }
       }
@@ -73,6 +79,8 @@ public class XMLMapperEntityResolver implements EntityResolver {
     InputSource source = null;
     if (path != null) {
       try {
+        // 通过 classLoader 加载文件，返回一个 inputStream
+        // 通过 inputStream 创建 inputSource 返回
         InputStream in = Resources.getResourceAsStream(path);
         source = new InputSource(in);
         source.setPublicId(publicId);
