@@ -42,11 +42,15 @@ import java.util.concurrent.locks.ReadWriteLock;
 public interface Cache {
 
   /**
+   * 定义的缓存id
+   *
    * @return The identifier of this cache
    */
   String getId();
 
   /**
+   * 缓存一个object
+   *
    * @param key
    *          Can be any object but usually it is a {@link CacheKey}
    * @param value
@@ -55,6 +59,8 @@ public interface Cache {
   void putObject(Object key, Object value);
 
   /**
+   * 获取一个object
+   *
    * @param key
    *          The key
    * @return The object stored in the cache.

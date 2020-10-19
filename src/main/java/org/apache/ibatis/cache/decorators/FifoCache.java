@@ -21,19 +21,31 @@ import java.util.LinkedList;
 import org.apache.ibatis.cache.Cache;
 
 /**
+ * FIFO 缓存机制（里面有队列）
+ *
  * FIFO (first in, first out) cache decorator.
  *
  * @author Clinton Begin
  */
 public class FifoCache implements Cache {
 
+  /**
+   * cache
+   */
   private final Cache delegate;
+  /**
+   * 队列集合
+   */
   private final Deque<Object> keyList;
+  /**
+   * 队列上限
+   */
   private int size;
 
   public FifoCache(Cache delegate) {
     this.delegate = delegate;
     this.keyList = new LinkedList<>();
+    // 默认队列大小 1024
     this.size = 1024;
   }
 

@@ -30,6 +30,8 @@ import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.io.SerialFilterChecker;
 
 /**
+ * SerializedCache ，实现 Cache 接口，支持序列化值的 Cache 实现类。
+ *
  * @author Clinton Begin
  */
 public class SerializedCache implements Cache {

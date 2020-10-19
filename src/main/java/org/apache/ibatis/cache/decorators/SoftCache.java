@@ -23,6 +23,8 @@ import java.util.LinkedList;
 import org.apache.ibatis.cache.Cache;
 
 /**
+ * SoftCache（软引用缓存） ，实现 Cache 接口，基于 java.lang.ref.SoftReference 的 Cache 实现类。代码如下：
+ *
  * Soft Reference cache decorator
  * Thanks to Dr. Heinz Kabutz for his guidance here.
  *

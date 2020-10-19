@@ -20,6 +20,10 @@ import java.util.concurrent.TimeUnit;
 import org.apache.ibatis.cache.Cache;
 
 /**
+ * 定时缓存
+ *
+ * tip：不是定时器实现，不过有过期时间和当前时间对比，在 get 的动作，都会去对比
+ *
  * @author Clinton Begin
  */
 public class ScheduledCache implements Cache {
