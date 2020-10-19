@@ -18,6 +18,8 @@ package org.apache.ibatis.exceptions;
 import org.apache.ibatis.executor.ErrorContext;
 
 /**
+ * 构建 exception 的工厂
+ *
  * @author Clinton Begin
  */
 public class ExceptionFactory {

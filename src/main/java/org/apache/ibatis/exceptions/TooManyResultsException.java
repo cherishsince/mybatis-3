@@ -16,6 +16,8 @@
 package org.apache.ibatis.exceptions;
 
 /**
+ * 多返回异常
+ *
  * @author Clinton Begin
  */
 public class TooManyResultsException extends PersistenceException {

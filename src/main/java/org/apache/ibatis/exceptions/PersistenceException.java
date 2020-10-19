@@ -16,6 +16,8 @@
 package org.apache.ibatis.exceptions;
 
 /**
+ * 持久化异常（操作sql发生的异常）
+ *
  * @author Clinton Begin
  */
 @SuppressWarnings("deprecation")
