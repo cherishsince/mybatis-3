@@ -36,6 +36,7 @@ public class MetaObject {
   private final ObjectWrapper objectWrapper;
   private final ObjectFactory objectFactory;
   private final ObjectWrapperFactory objectWrapperFactory;
+  // 构建 Reflector
   private final ReflectorFactory reflectorFactory;
 
   private MetaObject(Object object, ObjectFactory objectFactory, ObjectWrapperFactory objectWrapperFactory, ReflectorFactory reflectorFactory) {
