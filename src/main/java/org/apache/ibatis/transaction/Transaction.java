@@ -27,6 +27,8 @@ import java.sql.SQLException;
 public interface Transaction {
 
   /**
+   * 尝试获取数据库 链接
+   *
    * Retrieve inner database connection.
    * @return DataBase connection
    * @throws SQLException
@@ -35,6 +37,8 @@ public interface Transaction {
   Connection getConnection() throws SQLException;
 
   /**
+   * 提交数据库 链接
+   *
    * Commit inner database connection.
    * @throws SQLException
    *           the SQL exception
@@ -42,6 +46,8 @@ public interface Transaction {
   void commit() throws SQLException;
 
   /**
+   * 回滚数据库链接
+   *
    * Rollback inner database connection.
    * @throws SQLException
    *           the SQL exception
@@ -49,6 +55,8 @@ public interface Transaction {
   void rollback() throws SQLException;
 
   /**
+   * 关闭数据库链接
+   *
    * Close inner database connection.
    * @throws SQLException
    *           the SQL exception
@@ -56,6 +64,8 @@ public interface Transaction {
   void close() throws SQLException;
 
   /**
+   * 获取设置的 transaction 超时时间
+   *
    * Get transaction timeout if set.
    *
    * @return the timeout
