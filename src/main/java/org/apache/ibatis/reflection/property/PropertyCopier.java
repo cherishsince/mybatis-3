@@ -20,6 +20,10 @@ import java.lang.reflect.Field;
 import org.apache.ibatis.reflection.Reflector;
 
 /**
+ * 属性复制
+ *
+ * tip：就是将一个 bean的属性值，set 到另外一个对象里面
+ *
  * @author Clinton Begin
  */
 public final class PropertyCopier {

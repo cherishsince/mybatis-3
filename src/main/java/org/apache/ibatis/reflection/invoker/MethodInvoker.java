@@ -30,10 +30,12 @@ public class MethodInvoker implements Invoker {
 
   public MethodInvoker(Method method) {
     this.method = method;
-
+    // 设置 type 类型
     if (method.getParameterTypes().length == 1) {
+      // 方法参数类型
       type = method.getParameterTypes()[0];
     } else {
+      // 方法返回类型
       type = method.getReturnType();
     }
   }
@@ -43,6 +45,7 @@ public class MethodInvoker implements Invoker {
     try {
       return method.invoke(target, args);
     } catch (IllegalAccessException e) {
+      // 调用失败是，尝试第二种调用方式
       if (Reflector.canControlMemberAccessible()) {
         method.setAccessible(true);
         return method.invoke(target, args);

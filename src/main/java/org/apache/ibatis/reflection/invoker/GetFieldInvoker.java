@@ -20,6 +20,8 @@ import java.lang.reflect.Field;
 import org.apache.ibatis.reflection.Reflector;
 
 /**
+ * 调用 get 方法
+ *
  * @author Clinton Begin
  */
 public class GetFieldInvoker implements Invoker {

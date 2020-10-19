@@ -18,10 +18,26 @@ package org.apache.ibatis.reflection.invoker;
 import java.lang.reflect.InvocationTargetException;
 
 /**
+ * invoker 方法调用的抽象
+ *
  * @author Clinton Begin
  */
 public interface Invoker {
+
+  /**
+   * invoke 调用（这里不是 反射的invoke，不过会使用到相关技术）
+   * 注意：是现有，FieldInvoke、MethodInvoke、GetMethodInvoke、SetMethodInvoke
+   *
+   * @param target 目标对象
+   * @param args 参数
+   * @return
+   * @throws IllegalAccessException
+   * @throws InvocationTargetException
+   */
   Object invoke(Object target, Object[] args) throws IllegalAccessException, InvocationTargetException;
 
+  /**
+   * 获取类型（一般是返回类型）
+   */
   Class<?> getType();
 }
