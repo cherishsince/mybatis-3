@@ -34,6 +34,8 @@ import org.apache.ibatis.logging.LogFactory;
 /**
  * This is a simple, synchronous, thread-safe database connection pool.
  *
+ * 这是一个简单的，现场安全的 database 链接公共池
+ *
  * @author Clinton Begin
  */
 public class PooledDataSource implements DataSource {
@@ -44,6 +46,7 @@ public class PooledDataSource implements DataSource {
 
   private final UnpooledDataSource dataSource;
 
+  // 属性配置
   // OPTIONAL CONFIGURATION FIELDS
   protected int poolMaximumActiveConnections = 10;
   protected int poolMaximumIdleConnections = 5;
