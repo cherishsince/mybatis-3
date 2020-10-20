@@ -26,6 +26,10 @@ import java.nio.charset.Charset;
 import java.util.Properties;
 
 /**
+ * 这是一个工具类
+ *
+ * tip：采用 ClassLoaderWrapper 来封装一些公共方法
+ *
  * A class to simplify access to resources through the classloader.
  *
  * @author Clinton Begin

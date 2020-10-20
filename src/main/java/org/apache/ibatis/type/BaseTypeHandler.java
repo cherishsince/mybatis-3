@@ -38,12 +38,16 @@ import org.apache.ibatis.session.Configuration;
 public abstract class BaseTypeHandler<T> extends TypeReference<T> implements TypeHandler<T> {
 
   /**
+   * mybatis 配置信息
+   *
    * @deprecated Since 3.5.0 - See https://github.com/mybatis/mybatis-3/issues/1203. This field will remove future.
    */
   @Deprecated
   protected Configuration configuration;
 
   /**
+   * 设置配置文件
+   *
    * Sets the configuration.
    *
    * @param c

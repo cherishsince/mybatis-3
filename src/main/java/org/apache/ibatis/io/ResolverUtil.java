@@ -25,6 +25,8 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
 
 /**
+ * org.apache.ibatis.io.ResolverUtil ，解析器工具类，用于获得指定目录符合条件的类们。
+ *
  * <p>ResolverUtil is used to locate classes that are available in the/a class path and meet
  * arbitrary conditions. The two most common conditions are that a class implements/extends
  * another class, or that is it annotated with a specific annotation. However, through the use
@@ -114,6 +116,8 @@ public class ResolverUtil<T> {
   }
 
   /**
+   * AnnotatedWith ，判断是否有指定注解。
+   *
    * A Test that checks to see if each class is annotated with a specific annotation. If it
    * is, then the test returns true, otherwise false.
    */
