@@ -18,6 +18,10 @@ package org.apache.ibatis.logging;
 import java.lang.reflect.Constructor;
 
 /**
+ * 构建 Log 对象
+ *
+ * tip：这里 Log是Mybatis 自己的 Log 对象
+ *
  * @author Clinton Begin
  * @author Eduardo Macarron
  */
@@ -28,9 +32,13 @@ public final class LogFactory {
    */
   public static final String MARKER = "MYBATIS";
 
+  /**
+   * 使用的 Log 的构造方法
+   */
   private static Constructor<? extends Log> logConstructor;
 
   static {
+    // <1> 逐个尝试，判断使用哪个 Log 的实现类，即初始化 logConstructor 属性
     tryImplementation(LogFactory::useSlf4jLogging);
     tryImplementation(LogFactory::useCommonsLogging);
     tryImplementation(LogFactory::useLog4J2Logging);

@@ -26,6 +26,8 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.reflection.ExceptionUtil;
 
 /**
+ * PreparedStatement 添加 log，代理的方式
+ *
  * PreparedStatement proxy to add logging.
  *
  * @author Clinton Begin
@@ -47,6 +49,7 @@ public final class PreparedStatementLogger extends BaseJdbcLogger implements Inv
       if (Object.class.equals(method.getDeclaringClass())) {
         return method.invoke(this, params);
       }
+      // execute方法处理
       if (EXECUTE_METHODS.contains(method.getName())) {
         if (isDebugEnabled()) {
           debug("Parameters: " + getParameterValueString(), true);
@@ -58,6 +61,8 @@ public final class PreparedStatementLogger extends BaseJdbcLogger implements Inv
         } else {
           return method.invoke(statement, params);
         }
+
+        // set方法的处理
       } else if (SET_METHODS.contains(method.getName())) {
         if ("setNull".equals(method.getName())) {
           setColumn(params[0], null);
@@ -65,9 +70,13 @@ public final class PreparedStatementLogger extends BaseJdbcLogger implements Inv
           setColumn(params[0], params[1]);
         }
         return method.invoke(statement, params);
+
+        // getResultSet方法的处理
       } else if ("getResultSet".equals(method.getName())) {
         ResultSet rs = (ResultSet) method.invoke(statement, params);
         return rs == null ? null : ResultSetLogger.newInstance(rs, statementLog, queryStack);
+
+        // getUpdateCount方法的处理
       } else if ("getUpdateCount".equals(method.getName())) {
         int updateCount = (Integer) method.invoke(statement, params);
         if (updateCount != -1) {

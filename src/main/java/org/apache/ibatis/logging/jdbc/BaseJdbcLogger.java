@@ -33,6 +33,9 @@ import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.reflection.ArrayUtil;
 
 /**
+ * 和 《精尽 MyBatis 源码分析 —— 数据源模块》 类似，又是一个基于 JDBC 接口实现增强的案例，而原理上，也是基于 JDK 实现动态代理。
+ * 代码比较简单，感兴趣的胖友，自己简单看看即可。😈 有木有发现，MyBatis 大量的使用 JDK 实现动态代理。
+ *
  * Base class for proxies to do logging.
  *
  * @author Clinton Begin
@@ -40,15 +43,33 @@ import org.apache.ibatis.reflection.ArrayUtil;
  */
 public abstract class BaseJdbcLogger {
 
+  /**
+   * set 方法
+   */
   protected static final Set<String> SET_METHODS;
+  /**
+   * 执行方法
+   */
   protected static final Set<String> EXECUTE_METHODS = new HashSet<>();
-
+  /**
+   * 列的map
+   */
   private final Map<Object, Object> columnMap = new HashMap<>();
-
+  /**
+   * 列的名字集合
+   */
   private final List<Object> columnNames = new ArrayList<>();
+  /**
+   * 列的value集合
+   */
   private final List<Object> columnValues = new ArrayList<>();
-
+  /**
+   * Mybatis Log
+   */
   protected final Log statementLog;
+  /**
+   * 查询堆栈
+   */
   protected final int queryStack;
 
   /*

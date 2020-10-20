@@ -63,26 +63,33 @@ public final class ResultSetLogger extends BaseJdbcLogger implements InvocationH
   @Override
   public Object invoke(Object proxy, Method method, Object[] params) throws Throwable {
     try {
+      // 如果是 object 对象，那么直接 invoke
+      // tip：这里的 target 对象是 this
       if (Object.class.equals(method.getDeclaringClass())) {
         return method.invoke(this, params);
       }
+      // 调用sql的 ResultSet 对象
       Object o = method.invoke(rs, params);
       if ("next".equals(method.getName())) {
         if ((Boolean) o) {
           rows++;
+          // 开始 trace 情况，打印head和value信息
           if (isTraceEnabled()) {
             ResultSetMetaData rsmd = rs.getMetaData();
             final int columnCount = rsmd.getColumnCount();
             if (first) {
               first = false;
+              // 打印列head信息
               printColumnHeaders(rsmd, columnCount);
             }
+            // 打印列value信息
             printColumnValues(columnCount);
           }
         } else {
           debug("     Total: " + rows, false);
         }
       }
+      // 清理列信息
       clearColumnInfo();
       return o;
     } catch (Throwable t) {

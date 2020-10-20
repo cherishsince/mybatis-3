@@ -20,18 +20,50 @@ package org.apache.ibatis.logging;
  */
 public interface Log {
 
+  /**
+   * 是否开启 debug
+   */
   boolean isDebugEnabled();
 
+  /**
+   * 是否开启 trace
+   */
   boolean isTraceEnabled();
 
+  /**
+   * error 信息
+   *
+   * @param s
+   * @param e
+   */
   void error(String s, Throwable e);
 
+  /**
+   * error 信息
+   *
+   * @param s
+   */
   void error(String s);
 
+  /**
+   * debug 信息
+   *
+   * @param s
+   */
   void debug(String s);
 
+  /**
+   * trace 信息
+   *
+   * @param s
+   */
   void trace(String s);
 
+  /**
+   * warn 信息
+   *
+   * @param s
+   */
   void warn(String s);
 
 }
