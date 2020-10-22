@@ -39,21 +39,36 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 
 /**
+ * 在 Mapper 接口中，每个定义的方法，对应一个 MapperMethod 对象。
+ *
  * @author Clinton Begin
  * @author Eduardo Macarron
  * @author Lasse Voss
  * @author Kazuki Shimizu
  */
 public class MapperMethod {
-
+  /**
+   * SqlCommand：操作 sql 常用的对象，里面保护很多信息
+   */
   private final SqlCommand command;
+  /**
+   * MethodSignature：方法签名
+   */
   private final MethodSignature method;
 
   public MapperMethod(Class<?> mapperInterface, Method method, Configuration config) {
+    // 解析操作 sql 常用的对象，里面保护很多信息
     this.command = new SqlCommand(config, mapperInterface, method);
     this.method = new MethodSignature(config, mapperInterface, method);
   }
 
+  /**
+   * 执行
+   *
+   * @param sqlSession
+   * @param args
+   * @return
+   */
   public Object execute(SqlSession sqlSession, Object[] args) {
     Object result;
     switch (command.getType()) {
@@ -222,11 +237,14 @@ public class MapperMethod {
     private final SqlCommandType type;
 
     public SqlCommand(Configuration configuration, Class<?> mapperInterface, Method method) {
+      // 获取方法名
       final String methodName = method.getName();
+      // 获取方法的 class
       final Class<?> declaringClass = method.getDeclaringClass();
-      MappedStatement ms = resolveMappedStatement(mapperInterface, methodName, declaringClass,
-          configuration);
+      // 创建 MappedStatement
+      MappedStatement ms = resolveMappedStatement(mapperInterface, methodName, declaringClass, configuration);
       if (ms == null) {
+        // @Flush 操作？？？
         if (method.getAnnotation(Flush.class) != null) {
           name = null;
           type = SqlCommandType.FLUSH;
@@ -235,7 +253,9 @@ public class MapperMethod {
               + mapperInterface.getName() + "." + methodName);
         }
       } else {
+        // 获取id
         name = ms.getId();
+        // 获取 type（insert、update 等...）未解析到直接异常
         type = ms.getSqlCommandType();
         if (type == SqlCommandType.UNKNOWN) {
           throw new BindingException("Unknown execution method for: " + name);
@@ -253,12 +273,16 @@ public class MapperMethod {
 
     private MappedStatement resolveMappedStatement(Class<?> mapperInterface, String methodName,
         Class<?> declaringClass, Configuration configuration) {
+      // <1> 获得编号
       String statementId = mapperInterface.getName() + "." + methodName;
+      // <2> 如果有，获得 MappedStatement 对象，并返回
       if (configuration.hasStatement(statementId)) {
         return configuration.getMappedStatement(statementId);
+        // 如果没有，并且当前方法就是 declaringClass 声明的，则说明真的找不到
       } else if (mapperInterface.equals(declaringClass)) {
         return null;
       }
+      // 遍历父接口，继续获得 MappedStatement 对象
       for (Class<?> superInterface : mapperInterface.getInterfaces()) {
         if (declaringClass.isAssignableFrom(superInterface)) {
           MappedStatement ms = resolveMappedStatement(superInterface, methodName,
@@ -268,40 +292,85 @@ public class MapperMethod {
           }
         }
       }
+      // 真的找不到，返回 null
       return null;
     }
   }
 
   public static class MethodSignature {
 
+    /**
+     * 返回是不是 collection or array
+     */
     private final boolean returnsMany;
+    /**
+     * 返回是不是 map
+     */
     private final boolean returnsMap;
+    /**
+     * 返回是不是 void
+     */
     private final boolean returnsVoid;
+    /**
+     * 返回是不是 Cursor
+     */
     private final boolean returnsCursor;
+    /**
+     * 返回是不是 Optional
+     */
     private final boolean returnsOptional;
+    /**
+     * 返回类型
+     */
     private final Class<?> returnType;
+    /**
+     * @MapKey的值
+     */
     private final String mapKey;
+    /**
+     * resultHandler 在方法参数的 index
+     */
     private final Integer resultHandlerIndex;
+    /**
+     * rowBounds 在方法参数的 index
+     */
     private final Integer rowBoundsIndex;
+    /**
+     * 参数名字解析器
+     */
     private final ParamNameResolver paramNameResolver;
 
     public MethodSignature(Configuration configuration, Class<?> mapperInterface, Method method) {
+      // 解析返回类型
       Type resolvedReturnType = TypeParameterResolver.resolveReturnType(method, mapperInterface);
+      // 返回类型 是不是Class<?>
       if (resolvedReturnType instanceof Class<?>) {
+        // 强壮类型
         this.returnType = (Class<?>) resolvedReturnType;
+        // 是不是泛型实力
       } else if (resolvedReturnType instanceof ParameterizedType) {
         this.returnType = (Class<?>) ((ParameterizedType) resolvedReturnType).getRawType();
       } else {
+        // 方法返回类型
         this.returnType = method.getReturnType();
       }
+      // 返回是不是 void
       this.returnsVoid = void.class.equals(this.returnType);
+      // 返回是不是 collection or array
       this.returnsMany = configuration.getObjectFactory().isCollection(this.returnType) || this.returnType.isArray();
+      // 操作数据库相关
       this.returnsCursor = Cursor.class.equals(this.returnType);
+      // 是不是 Optional 对象
       this.returnsOptional = Optional.class.equals(this.returnType);
+      // 获取 @MapKey 注解value值
       this.mapKey = getMapKey(method);
+      // 返回是不是一个 map
       this.returnsMap = this.mapKey != null;
+      // 获取 RowBounds 在参数的index
       this.rowBoundsIndex = getUniqueParamIndex(method, RowBounds.class);
+      // 获取 ResultHandler 再参数的index
       this.resultHandlerIndex = getUniqueParamIndex(method, ResultHandler.class);
+      // 参数名字解析器
       this.paramNameResolver = new ParamNameResolver(configuration, method);
     }
 
@@ -357,11 +426,13 @@ public class MapperMethod {
 
     private Integer getUniqueParamIndex(Method method, Class<?> paramType) {
       Integer index = null;
+      // 遍历方法参数
       final Class<?>[] argTypes = method.getParameterTypes();
       for (int i = 0; i < argTypes.length; i++) {
         if (paramType.isAssignableFrom(argTypes[i])) {
           if (index == null) {
             index = i;
+            // 如果重复类型了，则抛出 BindingException 异常
           } else {
             throw new BindingException(method.getName() + " cannot have multiple " + paramType.getSimpleName() + " parameters");
           }

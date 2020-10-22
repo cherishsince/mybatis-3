@@ -30,6 +30,8 @@ import org.apache.ibatis.reflection.ExceptionUtil;
 import org.apache.ibatis.session.SqlSession;
 
 /**
+ * 这是一个实现 “动态代理的Class”
+ *
  * @author Clinton Begin
  * @author Eduardo Macarron
  */
@@ -79,9 +81,11 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     try {
+      // 调用 object 相关方法，目标对象位 this
       if (Object.class.equals(method.getDeclaringClass())) {
         return method.invoke(this, args);
       } else {
+        // cache 调用 method
         return cachedInvoker(method).invoke(proxy, method, args, sqlSession);
       }
     } catch (Throwable t) {
@@ -94,14 +98,17 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
       // A workaround for https://bugs.openjdk.java.net/browse/JDK-8161372
       // It should be removed once the fix is backported to Java 8 or
       // MyBatis drops Java 8 support. See gh-1929
+      // cache 存在直接返回
       MapperMethodInvoker invoker = methodCache.get(method);
       if (invoker != null) {
         return invoker;
       }
-
+      // 不存在才put
       return methodCache.computeIfAbsent(method, m -> {
+        // default 访问权限 public、static public
         if (m.isDefault()) {
           try {
+            // java8 和 java9 调用规则不用
             if (privateLookupInMethod == null) {
               return new DefaultMethodInvoker(getMethodHandleJava8(method));
             } else {
@@ -112,6 +119,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
             throw new RuntimeException(e);
           }
         } else {
+          // 有具体实现调用
           return new PlainMethodInvoker(new MapperMethod(mapperInterface, method, sqlSession.getConfiguration()));
         }
       });
@@ -135,10 +143,27 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
     return lookupConstructor.newInstance(declaringClass, ALLOWED_MODES).unreflectSpecial(method, declaringClass);
   }
 
+  /**
+   * mapper method invoker
+   */
   interface MapperMethodInvoker {
+
+    /**
+     * invoke 方法
+     *
+     * @param proxy
+     * @param method
+     * @param args
+     * @param sqlSession
+     * @return
+     * @throws Throwable
+     */
     Object invoke(Object proxy, Method method, Object[] args, SqlSession sqlSession) throws Throwable;
   }
 
+  /**
+   * 清楚的调用，有具体实现类情况
+   */
   private static class PlainMethodInvoker implements MapperMethodInvoker {
     private final MapperMethod mapperMethod;
 
