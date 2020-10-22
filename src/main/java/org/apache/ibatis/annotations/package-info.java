@@ -15,5 +15,13 @@
  */
 /**
  * Contains all the annotation that are used in mapper interfaces.
+ *
+ * 增删改查： @Insert、@Update、@Delete、@Select、@MapKey、@Options、@SelelctKey、
+ * @Param、@InsertProvider、@UpdateProvider、@DeleteProvider、@SelectProvider
+ *
+ * 结果集映射： @Results、@Result、@ResultMap、@ResultType、
+ * @ConstructorArgs、@Arg、@One、@Many、@TypeDiscriminator、@Case
+ *
+ * 缓存： @CacheNamespace、@Property、@CacheNamespaceRef、@Flush
  */
 package org.apache.ibatis.annotations;
