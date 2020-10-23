@@ -29,9 +29,18 @@ import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
 /**
+ * BaseBuilder ，基础构造器抽象类，为子类提供通用的工具类。
+ *
+ * 为什么不直接讲 XMLConfigBuilder ，而是先讲 BaseBuilder 呢？因为，BaseBuilder
+ * 是 XMLConfigBuilder 的父类，并且它还有其他的子类。
+ *
  * @author Clinton Begin
  */
 public abstract class BaseBuilder {
+
+  /**
+   * mybatis configuration 对象
+   */
   protected final Configuration configuration;
   protected final TypeAliasRegistry typeAliasRegistry;
   protected final TypeHandlerRegistry typeHandlerRegistry;
@@ -63,11 +72,18 @@ public abstract class BaseBuilder {
     return new HashSet<>(Arrays.asList(value.split(",")));
   }
 
+  /**
+   * 解析jdbc类型，date string 等.
+   *
+   * @param alias 别名
+   * @return
+   */
   protected JdbcType resolveJdbcType(String alias) {
     if (alias == null) {
       return null;
     }
     try {
+      // 里面是个 enum
       return JdbcType.valueOf(alias);
     } catch (IllegalArgumentException e) {
       throw new BuilderException("Error resolving JdbcType. Cause: " + e, e);
@@ -145,6 +161,13 @@ public abstract class BaseBuilder {
     return handler;
   }
 
+  /**
+   * 根据 alias 别名，解析对应类型
+   *
+   * @param alias
+   * @param <T>
+   * @return
+   */
   protected <T> Class<? extends T> resolveAlias(String alias) {
     return typeAliasRegistry.resolveAlias(alias);
   }

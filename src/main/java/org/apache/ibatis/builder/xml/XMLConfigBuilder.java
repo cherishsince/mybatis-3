@@ -52,10 +52,21 @@ import org.apache.ibatis.type.JdbcType;
  * @author Kazuki Shimizu
  */
 public class XMLConfigBuilder extends BaseBuilder {
-
+  /**
+   * parsed 解析标识
+   */
   private boolean parsed;
+  /**
+   * xpath 解析器（xml）
+   */
   private final XPathParser parser;
+  /**
+   * 环境
+   */
   private String environment;
+  /**
+   * 反射 factory
+   */
   private final ReflectorFactory localReflectorFactory = new DefaultReflectorFactory();
 
   public XMLConfigBuilder(Reader reader) {
@@ -95,7 +106,9 @@ public class XMLConfigBuilder extends BaseBuilder {
     if (parsed) {
       throw new BuilderException("Each XMLConfigBuilder can only be used once.");
     }
+    // parsed 标记位 true
     parsed = true;
+    // <2> 解析 XML configuration 节点(/configuration 是 xpath 表达式)
     parseConfiguration(parser.evalNode("/configuration"));
     return configuration;
   }
@@ -103,20 +116,31 @@ public class XMLConfigBuilder extends BaseBuilder {
   private void parseConfiguration(XNode root) {
     try {
       // issue #117 read properties first
+      // 解析 <properties>
       propertiesElement(root.evalNode("properties"));
+      // 解析 <settings>
       Properties settings = settingsAsProperties(root.evalNode("settings"));
       loadCustomVfs(settings);
       loadCustomLogImpl(settings);
+      // 解析 <typeAliases>
       typeAliasesElement(root.evalNode("typeAliases"));
+      // 解析 <plugins>
       pluginElement(root.evalNode("plugins"));
+      // 解析 <objectFactory>
       objectFactoryElement(root.evalNode("objectFactory"));
+      // 解析 <objectWrapperFactory>
       objectWrapperFactoryElement(root.evalNode("objectWrapperFactory"));
+      // 解析 <reflectorFactory>
       reflectorFactoryElement(root.evalNode("reflectorFactory"));
       settingsElement(settings);
       // read it after objectFactory and objectWrapperFactory issue #631
+      // 解析 <environments>
       environmentsElement(root.evalNode("environments"));
+      // 解析 <databaseIdProvider>
       databaseIdProviderElement(root.evalNode("databaseIdProvider"));
+      // 解析 <typeHandlers>
       typeHandlerElement(root.evalNode("typeHandlers"));
+      // 解析 <mappers>
       mapperElement(root.evalNode("mappers"));
     } catch (Exception e) {
       throw new BuilderException("Error parsing SQL Mapper Configuration. Cause: " + e, e);
