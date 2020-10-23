@@ -48,6 +48,8 @@ import org.apache.ibatis.transaction.TransactionFactory;
 import org.apache.ibatis.type.JdbcType;
 
 /**
+ * 解析 configuration 标签
+ *
  * @author Clinton Begin
  * @author Kazuki Shimizu
  */

@@ -31,6 +31,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
+ * <include> 标签
+ *
  * @author Frank D. Martinez [mnesarco]
  */
 public class XMLIncludeTransformer {

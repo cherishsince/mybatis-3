@@ -96,6 +96,9 @@ import org.apache.ibatis.type.UnknownTypeHandler;
  */
 public class MapperAnnotationBuilder {
 
+  /**
+   * SQL 操作注解集合
+   */
   private static final Set<Class<? extends Annotation>> statementAnnotationTypes = Stream
       .of(Select.class, Update.class, Insert.class, Delete.class, SelectProvider.class, UpdateProvider.class,
           InsertProvider.class, DeleteProvider.class)
@@ -103,6 +106,9 @@ public class MapperAnnotationBuilder {
 
   private final Configuration configuration;
   private final MapperBuilderAssistant assistant;
+  /**
+   * Mapper 接口类
+   */
   private final Class<?> type;
 
   public MapperAnnotationBuilder(Configuration configuration, Class<?> type) {
@@ -113,13 +119,20 @@ public class MapperAnnotationBuilder {
   }
 
   public void parse() {
+    // <1> 判断当前 Mapper 接口是否应加载过。
     String resource = type.toString();
     if (!configuration.isResourceLoaded(resource)) {
+      // <2> 加载对应的 XML Mapper
       loadXmlResource();
+      // <3> 标记该 Mapper 接口已经加载过
       configuration.addLoadedResource(resource);
+      // <4> 设置 namespace 属性
       assistant.setCurrentNamespace(type.getName());
+      // <5> 解析 @CacheNamespace 注解
       parseCache();
+      // <6> 解析 @CacheNamespaceRef 注解
       parseCacheRef();
+      // <7> 遍历每个方法，解析其上的注解
       for (Method method : type.getMethods()) {
         if (!canHaveStatement(method)) {
           continue;
@@ -129,12 +142,15 @@ public class MapperAnnotationBuilder {
           parseResultMap(method);
         }
         try {
+          // <7.1> 执行解析
           parseStatement(method);
         } catch (IncompleteElementException e) {
+          // <7.2> 解析失败，添加到 configuration 中
           configuration.addIncompleteMethod(new MethodResolver(this, method));
         }
       }
     }
+    // <8> 解析待定的方法
     parsePendingMethods();
   }
 
@@ -162,7 +178,9 @@ public class MapperAnnotationBuilder {
     // Spring may not know the real resource name so we check a flag
     // to prevent loading again a resource twice
     // this flag is set at XMLMapperBuilder#bindMapperForNamespace
+    // xml 的id "namespace:xxx.xx.xx.UserMapper"
     if (!configuration.isResourceLoaded("namespace:" + type.getName())) {
+      // 加载 xml
       String xmlResource = type.getName().replace('.', '/') + ".xml";
       // #1347
       InputStream inputStream = type.getResourceAsStream("/" + xmlResource);
@@ -175,6 +193,7 @@ public class MapperAnnotationBuilder {
         }
       }
       if (inputStream != null) {
+        // 解析 XMLMapper
         XMLMapperBuilder xmlParser = new XMLMapperBuilder(inputStream, assistant.getConfiguration(), xmlResource, configuration.getSqlFragments(), type.getName());
         xmlParser.parse();
       }
