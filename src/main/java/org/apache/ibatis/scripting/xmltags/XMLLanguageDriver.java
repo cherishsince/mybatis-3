@@ -29,6 +29,8 @@ import org.apache.ibatis.scripting.defaults.RawSqlSource;
 import org.apache.ibatis.session.Configuration;
 
 /**
+ * xml 语言驱动
+ *
  * @author Eduardo Macarron
  */
 public class XMLLanguageDriver implements LanguageDriver {
@@ -48,6 +50,7 @@ public class XMLLanguageDriver implements LanguageDriver {
   public SqlSource createSqlSource(Configuration configuration, String script, Class<?> parameterType) {
     // issue #3
     if (script.startsWith("<script>")) {
+      // 解析 xml 中的 script 标签信息
       XPathParser parser = new XPathParser(script, false, configuration.getVariables(), new XMLMapperEntityResolver());
       return createSqlSource(configuration, parser.evalNode("/script"), parameterType);
     } else {
