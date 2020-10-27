@@ -24,6 +24,10 @@ import org.apache.ibatis.reflection.property.PropertyTokenizer;
 import org.apache.ibatis.session.Configuration;
 
 /**
+ * 处理任何动态内容后，从{@link SqlSource}获取的实际SQL字符串。
+ *
+ * SQL可能具有SQL占位符“？” 参数映射的列表（排序的），其中包含每个参数的附加信息（至少是从中读取值的输入对象的属性名称）。
+ *
  * An actual SQL String got from an {@link SqlSource} after having processed any dynamic content.
  * The SQL may have SQL placeholders "?" and an list (ordered) of an parameter mappings
  * with the additional information for each parameter (at least the property name of the input object to read
