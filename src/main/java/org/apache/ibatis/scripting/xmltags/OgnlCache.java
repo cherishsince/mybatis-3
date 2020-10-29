@@ -24,6 +24,8 @@ import ognl.OgnlException;
 import org.apache.ibatis.builder.BuilderException;
 
 /**
+ * 缓存 OGNL 解析的表达式结果的缓存
+ *
  * Caches OGNL parsed expressions.
  *
  * @author Eduardo Macarron
@@ -32,8 +34,17 @@ import org.apache.ibatis.builder.BuilderException;
  */
 public final class OgnlCache {
 
+  /**
+   *
+   */
   private static final OgnlMemberAccess MEMBER_ACCESS = new OgnlMemberAccess();
+  /**
+   *
+   */
   private static final OgnlClassResolver CLASS_RESOLVER = new OgnlClassResolver();
+  /**
+   * 解析后缓存，便于第二次直接获取
+   */
   private static final Map<String, Object> expressionCache = new ConcurrentHashMap<>();
 
   private OgnlCache() {
@@ -42,7 +53,9 @@ public final class OgnlCache {
 
   public static Object getValue(String expression, Object root) {
     try {
+      // tip: root 是 OgnlContext 转换返回，不是就创建一个 OgnlContext
       Map context = Ognl.createDefaultContext(root, MEMBER_ACCESS, CLASS_RESOLVER, null);
+      // 解析表达式 并 获取value
       return Ognl.getValue(parseExpression(expression), context, root);
     } catch (OgnlException e) {
       throw new BuilderException("Error evaluating expression '" + expression + "'. Cause: " + e, e);
@@ -50,9 +63,13 @@ public final class OgnlCache {
   }
 
   private static Object parseExpression(String expression) throws OgnlException {
+    // tip: 先从cache中获取，没有再去解析表达式
+    // tip: 如 data.id，有可能是对象里面的id，也有可能是 keyMap 的key
     Object node = expressionCache.get(expression);
     if (node == null) {
+      // 解析 expression 表达式
       node = Ognl.parseExpression(expression);
+      // 解析的 cache，避免下一次再次解析
       expressionCache.put(expression, node);
     }
     return node;
