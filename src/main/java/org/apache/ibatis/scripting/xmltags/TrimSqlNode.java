@@ -29,11 +29,23 @@ import org.apache.ibatis.session.Configuration;
  */
 public class TrimSqlNode implements SqlNode {
 
+  /**
+   * sql 节点
+   */
   private final SqlNode contents;
+  /**
+   * 标签 where(标签有两对<where></where>，一个开始一个结束，这里指的第一个)
+   */
   private final String prefix;
   private final String suffix;
+  /**
+   * 标签 集合（AND、OR）
+   */
   private final List<String> prefixesToOverride;
   private final List<String> suffixesToOverride;
+  /**
+   * mybatis 配置
+   */
   private final Configuration configuration;
 
   public TrimSqlNode(Configuration configuration, SqlNode contents, String prefix, String prefixesToOverride, String suffix, String suffixesToOverride) {
