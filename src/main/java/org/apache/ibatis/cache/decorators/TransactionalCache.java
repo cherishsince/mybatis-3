@@ -114,10 +114,15 @@ public class TransactionalCache implements Cache {
   }
 
   private void flushPendingEntries() {
+    // TODO: 2020/11/19 耳机缓存生效地方
+    // 将事务未提交的数据，添加到 cache 中
+    // tip: 只有添加了才会生效，耳机缓存
     for (Map.Entry<Object, Object> entry : entriesToAddOnCommit.entrySet()) {
       delegate.putObject(entry.getKey(), entry.getValue());
     }
+    // 未命中缓存
     for (Object entry : entriesMissedInCache) {
+      // 未提交的缓存，是否存在未命中的，不存在就添加到 cache
       if (!entriesToAddOnCommit.containsKey(entry)) {
         delegate.putObject(entry, null);
       }

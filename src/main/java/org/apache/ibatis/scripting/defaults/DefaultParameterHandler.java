@@ -61,13 +61,18 @@ public class DefaultParameterHandler implements ParameterHandler {
   @Override
   public void setParameters(PreparedStatement ps) {
     ErrorContext.instance().activity("setting parameters").object(mappedStatement.getParameterMap().getId());
+    // 获取 sql 参数映射
     List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
     if (parameterMappings != null) {
       for (int i = 0; i < parameterMappings.size(); i++) {
+        // 获取第一个参数
         ParameterMapping parameterMapping = parameterMappings.get(i);
+        // 参数模式不是 out进入
         if (parameterMapping.getMode() != ParameterMode.OUT) {
           Object value;
+          // 参数名字
           String propertyName = parameterMapping.getProperty();
+          // 是否是附加参数(param1 param2 param3)
           if (boundSql.hasAdditionalParameter(propertyName)) { // issue #448 ask first for additional params
             value = boundSql.getAdditionalParameter(propertyName);
           } else if (parameterObject == null) {
@@ -75,15 +80,20 @@ public class DefaultParameterHandler implements ParameterHandler {
           } else if (typeHandlerRegistry.hasTypeHandler(parameterObject.getClass())) {
             value = parameterObject;
           } else {
+            // 创建元对象 MetaObject，对元对象的描述信息
             MetaObject metaObject = configuration.newMetaObject(parameterObject);
             value = metaObject.getValue(propertyName);
           }
+          // 获取参数对应的 TypeHandler 类型处理器
           TypeHandler typeHandler = parameterMapping.getTypeHandler();
+          // 获取 jdbc 类型
           JdbcType jdbcType = parameterMapping.getJdbcType();
           if (value == null && jdbcType == null) {
             jdbcType = configuration.getJdbcTypeForNull();
           }
           try {
+            // TODO: 2020/11/19 fan jdbc类型和Java类型转换，在这里转换
+            // 类型处理器，处理 jdbcType 和 java之间的类型转换
             typeHandler.setParameter(ps, i + 1, value, jdbcType);
           } catch (TypeException | SQLException e) {
             throw new TypeException("Could not set parameters for mapping: " + parameterMapping + ". Cause: " + e, e);

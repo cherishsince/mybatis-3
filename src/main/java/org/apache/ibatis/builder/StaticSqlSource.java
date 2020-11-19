@@ -32,6 +32,7 @@ public class StaticSqlSource implements SqlSource {
   private final Configuration configuration;
 
   public StaticSqlSource(Configuration configuration, String sql) {
+    // TODO: 2020/11/19 fan 什么是否创建的
     this(configuration, sql, null);
   }
 

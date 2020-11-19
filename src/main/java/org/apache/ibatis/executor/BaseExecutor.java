@@ -148,11 +148,14 @@ public abstract class BaseExecutor implements Executor {
     }
     List<E> list;
     try {
+      // 查询计数++
       queryStack++;
+      // tip: localCache 是 PerpetualCache（永久缓存）
       list = resultHandler == null ? (List<E>) localCache.getObject(key) : null;
       if (list != null) {
         handleLocallyCachedOutputParameters(ms, key, parameter, boundSql);
       } else {
+        // 查询数据库
         list = queryFromDatabase(ms, parameter, rowBounds, resultHandler, key, boundSql);
       }
     } finally {
@@ -320,12 +323,16 @@ public abstract class BaseExecutor implements Executor {
 
   private <E> List<E> queryFromDatabase(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql) throws SQLException {
     List<E> list;
+    // 添加一个 cache 占位
     localCache.putObject(key, EXECUTION_PLACEHOLDER);
     try {
+      // 去操作 jdbc 查询
       list = doQuery(ms, parameter, rowBounds, resultHandler, boundSql);
     } finally {
+      // 删除 cache
       localCache.removeObject(key);
     }
+    // 重新添加到 cache
     localCache.putObject(key, list);
     if (ms.getStatementType() == StatementType.CALLABLE) {
       localOutputParameterCache.putObject(key, parameter);
@@ -334,7 +341,9 @@ public abstract class BaseExecutor implements Executor {
   }
 
   protected Connection getConnection(Log statementLog) throws SQLException {
+    // 通过MyBatis transaction 接口，过去 jdbc的Connection
     Connection connection = transaction.getConnection();
+    // 如果开启了debug模式，采用代理模式，输出日志
     if (statementLog.isDebugEnabled()) {
       return ConnectionLogger.newInstance(connection, statementLog, queryStack);
     } else {

@@ -33,6 +33,8 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.transaction.Transaction;
 
 /**
+ * 缓存执行器
+ *
  * @author Clinton Begin
  * @author Eduardo Macarron
  */
@@ -92,20 +94,25 @@ public class CachingExecutor implements Executor {
   @Override
   public <E> List<E> query(MappedStatement ms, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql)
       throws SQLException {
+    // 获取缓存(xml里面<cache>标签)
     Cache cache = ms.getCache();
     if (cache != null) {
+      // 如果需要的话，刷新缓存(清理事务的缓存)
       flushCacheIfRequired(ms);
       if (ms.isUseCache() && resultHandler == null) {
         ensureNoOutParams(ms, boundSql);
+        // 从cache中获取
         @SuppressWarnings("unchecked")
         List<E> list = (List<E>) tcm.getObject(cache, key);
         if (list == null) {
+          // delegate 是执行器，执行 query动作
           list = delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
           tcm.putObject(cache, key, list); // issue #578 and #116
         }
         return list;
       }
     }
+    // delegate 是执行器，执行 query动作
     return delegate.query(ms, parameterObject, rowBounds, resultHandler, key, boundSql);
   }
 
@@ -132,6 +139,7 @@ public class CachingExecutor implements Executor {
   }
 
   private void ensureNoOutParams(MappedStatement ms, BoundSql boundSql) {
+    // TODO: 2020/11/19 fan 不知道干嘛的
     if (ms.getStatementType() == StatementType.CALLABLE) {
       for (ParameterMapping parameterMapping : boundSql.getParameterMappings()) {
         if (parameterMapping.getMode() != ParameterMode.IN) {
@@ -164,6 +172,7 @@ public class CachingExecutor implements Executor {
   private void flushCacheIfRequired(MappedStatement ms) {
     Cache cache = ms.getCache();
     if (cache != null && ms.isFlushCacheRequired()) {
+      // 清理 TransactionalCacheManager 缓存
       tcm.clear(cache);
     }
   }

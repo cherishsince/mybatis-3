@@ -22,9 +22,11 @@
 
 <mapper namespace="org.apache.ibatis.mainTest.UserMapper">
 
+  <cache />
+
   <!--  查询根据id  -->
   <select id="selectById" resultType="org.apache.ibatis.mainTest.UserDO" parameterType="java.lang.Long">
-    SELECT * FROM `tuns_assess_user`
+    SELECT * FROM `user`
     WHERE id = #{id}
   </select>
 </mapper>

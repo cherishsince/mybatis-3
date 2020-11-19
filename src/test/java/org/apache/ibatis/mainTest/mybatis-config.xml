@@ -20,11 +20,16 @@
 
 <configuration>
 
-  <properties resource="test.properties">
-    <property name="driver" value="org.postgresql.Driver"/>
-    <property name="username" value="devadm"/>
-    <property name="password" value="devadm1234"/>
-    <property name="url" value="jdbc:postgresql://192.168.2.20:5432/devIns"/>
+  <properties>
+    <!--    <property name="driver" value="org.postgresql.Driver"/>-->
+    <!--    <property name="username" value="devadm"/>-->
+    <!--    <property name="password" value="devadm1234"/>-->
+    <!--    <property name="url" value="jdbc:postgresql://192.168.2.20:5432/devIns"/>-->
+
+    <property name="driver" value="com.mysql.jdbc.Driver"/>
+    <property name="username" value="root"/>
+    <property name="password" value="@D23d7a3df91cc42"/>
+    <property name="url" value="jdbc:mysql://120.78.218.163:3306/storm_sports"/>
   </properties>
 
   <environments default="development">

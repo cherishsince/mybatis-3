@@ -180,17 +180,19 @@ public class DefaultResultSetHandler implements ResultSetHandler {
   @Override
   public List<Object> handleResultSets(Statement stmt) throws SQLException {
     ErrorContext.instance().activity("handling results").object(mappedStatement.getId());
-
+    // 返回容器
     final List<Object> multipleResults = new ArrayList<>();
-
+    // 返回数量
     int resultSetCount = 0;
+    // 获取 Statement 返回值，并包装成 ResultSetWrapper
     ResultSetWrapper rsw = getFirstResultSet(stmt);
-
+    // 获取 ResultMap
     List<ResultMap> resultMaps = mappedStatement.getResultMaps();
     int resultMapCount = resultMaps.size();
     validateResultMapsCount(rsw, resultMapCount);
     while (rsw != null && resultMapCount > resultSetCount) {
       ResultMap resultMap = resultMaps.get(resultSetCount);
+      // 处理 result 返回值，将数据转换为 java 对应的数据类型
       handleResultSet(rsw, resultMap, multipleResults, null);
       rsw = getNextResultSet(stmt);
       cleanUpAfterHandlingResultSet();
@@ -211,7 +213,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
         resultSetCount++;
       }
     }
-
+    // 返回一个简单的 list
     return collapseSingleResultList(multipleResults);
   }
 
@@ -234,8 +236,10 @@ public class DefaultResultSetHandler implements ResultSetHandler {
   }
 
   private ResultSetWrapper getFirstResultSet(Statement stmt) throws SQLException {
+    // 获取 jdbc Statement 返回值
     ResultSet rs = stmt.getResultSet();
     while (rs == null) {
+      // tip: 这里是 hsqldb2.1 兼容
       // move forward to get the first resultset in case the driver
       // doesn't return the resultset as the first result (HSQLDB 2.1)
       if (stmt.getMoreResults()) {
@@ -247,6 +251,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
         }
       }
     }
+    // 返回 ResultSetWrapper 包装结果集
     return rs != null ? new ResultSetWrapper(rs, configuration) : null;
   }
 

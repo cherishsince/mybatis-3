@@ -60,7 +60,7 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
       privateLookupIn = null;
     }
     privateLookupInMethod = privateLookupIn;
-
+// TODO: 2020/11/19 fan
     Constructor<Lookup> lookup = null;
     if (privateLookupInMethod == null) {
       // JDK 1.8

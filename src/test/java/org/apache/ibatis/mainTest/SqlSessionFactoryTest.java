@@ -42,9 +42,24 @@ public class SqlSessionFactoryTest extends BaseDataTest {
 
   @Test
   public void selectTest() {
-    SqlSession sqlSession = sqlSessionFactory.openSession();
-    String statement = "org.apache.ibatis.mainTest.UserMapper.selectById";
-    UserDO userDO = sqlSession.selectOne(statement, 1L);
-    sqlSession.commit();
+    {
+      SqlSession sqlSession = sqlSessionFactory.openSession();
+      UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+      UserDO userDO = userMapper.selectById(1L);
+      UserDO userDO2 = userMapper.selectById(1L);
+      System.err.println(userDO);
+      sqlSession.commit();
+      sqlSession.close();
+    }
+
+    {
+      SqlSession sqlSession = sqlSessionFactory.openSession();
+      UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+      UserDO userDO = userMapper.selectById(1L);
+      UserDO userDO2 = userMapper.selectById(1L);
+      System.err.println(userDO);
+      sqlSession.commit();
+      sqlSession.close();
+    }
   }
 }

@@ -16,6 +16,8 @@
 package org.apache.ibatis.executor;
 
 /**
+ * 执行器 占位
+ *
  * @author Clinton Begin
  */
 public enum ExecutionPlaceholder {

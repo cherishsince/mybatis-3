@@ -98,6 +98,7 @@ public class MapperMethod {
         } else if (method.returnsCursor()) {
           result = executeForCursor(sqlSession, args);
         } else {
+          // 将mapper接口参数转换为，xml里面sql需要使用的参数
           Object param = method.convertArgsToSqlCommandParam(args);
           result = sqlSession.selectOne(command.getName(), param);
           if (method.returnsOptional()

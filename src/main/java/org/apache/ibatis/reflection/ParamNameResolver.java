@@ -120,17 +120,29 @@ public class ParamNameResolver {
    * @return the named params
    */
   public Object getNamedParams(Object[] args) {
+    // tip: names 是mapper方法参数，key参数的index，value是参数的名字
+    // tip: names 是mapper方法参数，key参数的index，value是参数的名字
+    // tip: names 是mapper方法参数，key参数的index，value是参数的名字
     final int paramCount = names.size();
     if (args == null || paramCount == 0) {
       return null;
     } else if (!hasParamAnnotation && paramCount == 1) {
+      // tip 没有 @Param注解，并且，只有一个参数，直接返回
       Object value = args[names.firstKey()];
       return wrapToMapIfCollection(value, useActualParamName ? names.get(0) : null);
     } else {
+      // tip 多个参数
       final Map<String, Object> param = new ParamMap<>();
       int i = 0;
       for (Map.Entry<Integer, String> entry : names.entrySet()) {
+        // tip: names 是mapper方法参数，key参数的index，value是参数的名字
+
+        // tip: 这里是按照 参数顺序 绑定值
+        // 根据 index小标，绑定value值
+        // 如：getById(int id) put(id, args[0])
         param.put(entry.getValue(), args[entry.getKey()]);
+
+        // tip: 别名也是按照顺序 param1, param2
         // add generic param names (param1, param2, ...)
         final String genericParamName = GENERIC_NAME_PREFIX + (i + 1);
         // ensure not to overwrite parameter named with @Param
