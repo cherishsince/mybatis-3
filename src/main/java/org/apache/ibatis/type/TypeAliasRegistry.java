@@ -33,6 +33,10 @@ import org.apache.ibatis.io.ResolverUtil;
 import org.apache.ibatis.io.Resources;
 
 /**
+ * 类型别名注册
+ *
+ * tip：默认加载了 基本数据类型
+ *
  * @author Clinton Begin
  */
 public class TypeAliasRegistry {

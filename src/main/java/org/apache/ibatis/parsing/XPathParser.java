@@ -1,5 +1,5 @@
 /**
- *    Copyright 2009-2019 the original author or authors.
+ *    Copyright 2009-2020 the original author or authors.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -49,7 +49,9 @@ public class XPathParser {
   private boolean validation;
   // 这是 xml 解析器，DTD验证 Schema验证
   private EntityResolver entityResolver;
+  // .properties 文件
   private Properties variables;
+  // xpath 表达式
   private XPath xpath;
 
   public XPathParser(String xml) {
@@ -250,7 +252,7 @@ public class XPathParser {
       // 1> 创建 DocumentBuilderFactory 对象
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
       factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-      // 是否严重 xml 文档(dtd 和 xld)
+      // 是否验证xml 文档(dtd 和 xld)
       factory.setValidating(validation);
 
       factory.setNamespaceAware(false);

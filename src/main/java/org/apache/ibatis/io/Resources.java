@@ -36,6 +36,9 @@ import java.util.Properties;
  */
 public class Resources {
 
+  /**
+   * 里面是 SystemClassLoader 类加载器
+   */
   private static ClassLoaderWrapper classLoaderWrapper = new ClassLoaderWrapper();
 
   /**

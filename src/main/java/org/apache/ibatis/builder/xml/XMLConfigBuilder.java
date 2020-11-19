@@ -388,6 +388,9 @@ public class XMLConfigBuilder extends BaseBuilder {
 
   private void mapperElement(XNode parent) throws Exception {
     if (parent != null) {
+      // tip: 这里是 mybatis-config.xml，写的 sql 是 xxxMapper.xml
+      // tip: 一个是 xml配置文件，另一个是 xml映射文件
+      // tip: xml配置文件 <mappers resource="userMapper.xml"> 这种方式导入
       for (XNode child : parent.getChildren()) {
         if ("package".equals(child.getName())) {
           String mapperPackage = child.getStringAttribute("name");
@@ -396,6 +399,8 @@ public class XMLConfigBuilder extends BaseBuilder {
           String resource = child.getStringAttribute("resource");
           String url = child.getStringAttribute("url");
           String mapperClass = child.getStringAttribute("class");
+
+          // tip: 这里分为 resource解析，url解析，mapperClass解析
           if (resource != null && url == null && mapperClass == null) {
             ErrorContext.instance().resource(resource);
             InputStream inputStream = Resources.getResourceAsStream(resource);
