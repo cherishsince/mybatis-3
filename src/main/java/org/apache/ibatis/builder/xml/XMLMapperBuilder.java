@@ -1,17 +1,17 @@
 /**
- *    Copyright 2009-2020 the original author or authors.
- *
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
+ * Copyright 2009-2020 the original author or authors.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.ibatis.builder.xml;
 
@@ -112,12 +112,12 @@ public class XMLMapperBuilder extends BaseBuilder {
   public void parse() {
     // loadedResources 没有加载过资源，进入
     if (!configuration.isResourceLoaded(resource)) {
-      // 1、获取 mapper 节点
-      // 2、解析 mapper 标签
+      // <1>、获取 mapper 节点
+      // <2>、解析 mapper 标签
       configurationElement(parser.evalNode("/mapper"));
-      // 3、添加到 loadedResources 进行缓存，标记已加载
+      // <3>、添加到 loadedResources 进行缓存，标记已加载
       configuration.addLoadedResource(resource);
-      // mapper绑定namespace命名空间
+      // <4>、mapper绑定namespace命名空间
       bindMapperForNamespace();
     }
     // 解析 resultMap
@@ -452,11 +452,12 @@ public class XMLMapperBuilder extends BaseBuilder {
    * mapper 绑定到 namespace
    */
   private void bindMapperForNamespace() {
-    // 获取当前的 namespace
+    // <1> 获取当前的 namespace
     String namespace = builderAssistant.getCurrentNamespace();
     if (namespace != null) {
       Class<?> boundType = null;
       try {
+        // <2> 采用MyBatis classLoaderWrapper 加载这个 class(mapper) 信息(里面其实就是ClassLoader)
         boundType = Resources.classForName(namespace);
       } catch (ClassNotFoundException e) {
         // ignore, bound type is not required
@@ -465,7 +466,9 @@ public class XMLMapperBuilder extends BaseBuilder {
         // Spring may not know the real resource name so we set a flag
         // to prevent loading again this resource from the mapper interface
         // look at MapperAnnotationBuilder#loadXmlResource
+        // <3.1> 添加 namespace
         configuration.addLoadedResource("namespace:" + namespace);
+        // <3.2> tip: 添加到 MapperRegister，这一步其实是注册 mapper
         configuration.addMapper(boundType);
       }
     }

@@ -167,6 +167,7 @@ public class Configuration {
   protected final Collection<XMLStatementBuilder> incompleteStatements = new LinkedList<>();
   protected final Collection<CacheRefResolver> incompleteCacheRefs = new LinkedList<>();
   protected final Collection<ResultMapResolver> incompleteResultMaps = new LinkedList<>();
+  // 不完全方法, 相当于标记这个方法是没有解析完成的,因为目前信息不够.
   protected final Collection<MethodResolver> incompleteMethods = new LinkedList<>();
 
   /*
