@@ -1,6 +1,10 @@
-# Mapper解析注解
+# Mapper注解解析
 
-Mapper注解解析步骤，在注册 Mapper 的时候，`MapperRegistry#addMapper`，代码如下：
+Mapper在什么时候解析注解的？一般在开发过程中，大家可能都会存在一些混编，那什么时候解析，怎么生效的？
+
+
+
+##### 1、Mapper注解解析
 
 ```java
 // MapperRegistry
@@ -36,11 +40,16 @@ public <T> void addMapper(Class<T> type) {
 }
 ```
 
-说明：在<3>这里，构建了 `MapperAnnotationBuilder` 也是进行注解相关的解析过程（所以Mybatis不需要配置，也能注册一个Mapper）。
+说明：
+
+- **Mapper注解解析** 是在 addMapper 的时候；这里会有两个入口，**1、xml配置** 和 **2、configuration配置类**  两个入口；
+- 注意、注意、注意，**xml配置** 在addMapper 的时候 **才解析注解** ；**configuration类配置** ，**在解析注解的时候，会检查是否加载过.xml配置文件，没有就回去加载！**
 
 
 
-解析代码如下：
+##### 2、MapperAnnotationBuilder 解析
+
+如下是，注解解析过程，代码如下：
 
 ```java
 // MapperAnnotationBuilder
@@ -83,9 +92,34 @@ public void parse() {
 
 ```
 
-解析注解有几个需要注意的地方：
+说明：
 
-1. <1> 这个if判断，判断 resource，xml假的是时候(`bindMapperForNamespace`) 里面也会添加resource这个动作，区别在于：
-   1. xml加载 addResource 是 "namespace" + 配置的namespace
-   2. 注解加载 addResource 是 Class<?> type type.toString，获取到的时候 interface xx.xx.UserMapper
-2. parsePendingMethods 是解析过程中，信息还不完全的时候，如：mapper 有两个 xml配置，加载顺序不一样，@ResultMap 就会放入
+- 重点在 **if 判断** ，`isResourceLoaded` 是 `Configuration` 里面的一个 `Set` 保存我们加载的资源，资源包含两个，**第一个是我们的mapper接口，第二个是mapper.xml 配置文件**，这两个都是资源文件，如下代码：
+
+  ```java
+  // MapperAnnotationBuilder.parse
+  if (!configuration.isResourceLoaded(resource))
+  // MapperAnnotationBuilder.loadXmlResource
+  if (!configuration.isResourceLoaded("namespace:" + type.getName()))
+  ```
+
+  xml加载 addResource 是 "namespace" + 配置的namespace，注解加载 addResource 是 Class<?> type type.toString，获取到的时候 interface xx.xx.UserMapper
+
+- parsePendingMethods 是解析过程中，信息还不完全的时候，如：mapper 有两个 xml配置，加载顺序不一样，@ResultMap 就会放入
+
+
+
+完结~
+
+
+
+
+
+# 彩蛋
+
+
+
+1. 注解在什么时候解析？
+2. Configuration配置文件中的 loadedResources 保存的资源分为哪几种？
+3. xml配置 和 Configuration配置，解析方式有什么区别？
+
