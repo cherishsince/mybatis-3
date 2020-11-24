@@ -178,31 +178,31 @@ public class MapperAnnotationBuilder {
     }
   }
 
-  private void loadXmlResource() {
-    // Spring may not know the real resource name so we check a flag
-    // to prevent loading again a resource twice
-    // this flag is set at XMLMapperBuilder#bindMapperForNamespace
-    // xml 的id "namespace:xxx.xx.xx.UserMapper"
-    if (!configuration.isResourceLoaded("namespace:" + type.getName())) {
-      // 加载 xml
-      String xmlResource = type.getName().replace('.', '/') + ".xml";
-      // #1347
-      InputStream inputStream = type.getResourceAsStream("/" + xmlResource);
-      if (inputStream == null) {
-        // Search XML mapper that is not in the module but in the classpath.
-        try {
-          inputStream = Resources.getResourceAsStream(type.getClassLoader(), xmlResource);
-        } catch (IOException e2) {
-          // ignore, resource is not required
-        }
-      }
-      if (inputStream != null) {
-        // 解析 XMLMapper
-        XMLMapperBuilder xmlParser = new XMLMapperBuilder(inputStream, assistant.getConfiguration(), xmlResource, configuration.getSqlFragments(), type.getName());
-        xmlParser.parse();
+private void loadXmlResource() {
+  // Spring may not know the real resource name so we check a flag
+  // to prevent loading again a resource twice
+  // this flag is set at XMLMapperBuilder#bindMapperForNamespace
+  // xml 的id "namespace:xxx.xx.xx.UserMapper"
+  if (!configuration.isResourceLoaded("namespace:" + type.getName())) {
+    // 加载 xml
+    String xmlResource = type.getName().replace('.', '/') + ".xml";
+    // #1347
+    InputStream inputStream = type.getResourceAsStream("/" + xmlResource);
+    if (inputStream == null) {
+      // Search XML mapper that is not in the module but in the classpath.
+      try {
+        inputStream = Resources.getResourceAsStream(type.getClassLoader(), xmlResource);
+      } catch (IOException e2) {
+        // ignore, resource is not required
       }
     }
+    if (inputStream != null) {
+      // 解析 XMLMapper
+      XMLMapperBuilder xmlParser = new XMLMapperBuilder(inputStream, assistant.getConfiguration(), xmlResource, configuration.getSqlFragments(), type.getName());
+      xmlParser.parse();
+    }
   }
+}
 
   private void parseCache() {
     CacheNamespace cacheDomain = type.getAnnotation(CacheNamespace.class);

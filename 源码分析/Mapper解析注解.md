@@ -85,4 +85,7 @@ public void parse() {
 
 解析注解有几个需要注意的地方：
 
-1. <1> 这个if判断，判断 resource，xml加
+1. <1> 这个if判断，判断 resource，xml假的是时候(`bindMapperForNamespace`) 里面也会添加resource这个动作，区别在于：
+   1. xml加载 addResource 是 "namespace" + 配置的namespace
+   2. 注解加载 addResource 是 Class<?> type type.toString，获取到的时候 interface xx.xx.UserMapper
+2. parsePendingMethods 是解析过程中，信息还不完全的时候，如：mapper 有两个 xml配置，加载顺序不一样，@ResultMap 就会放入
