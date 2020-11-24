@@ -53,6 +53,8 @@ public class MapperMethod {
   private final SqlCommand command;
   /**
    * MethodSignature：方法签名
+   *
+   * tip：描述了方法的基本信息，参数，操作（select、update...）
    */
   private final MethodSignature method;
 
