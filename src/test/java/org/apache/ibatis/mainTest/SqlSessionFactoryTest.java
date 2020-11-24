@@ -47,7 +47,7 @@ public class SqlSessionFactoryTest extends BaseDataTest {
 
   @Test
   public void selectTest() {
-    // 一级缓存
+    // 一级缓存.md
     {
       SqlSession sqlSession = sqlSessionFactory.openSession();
       UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
@@ -58,7 +58,7 @@ public class SqlSessionFactoryTest extends BaseDataTest {
       sqlSession.close();
     }
 
-    // 二级缓存
+    // 二级缓存.md
     {
       SqlSession sqlSession = sqlSessionFactory.openSession();
       UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
