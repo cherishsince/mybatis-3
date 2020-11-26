@@ -17,6 +17,8 @@ public class SqlPrintPlugin implements Interceptor {
 
   @Override
   public Object intercept(Invocation invocation) throws Throwable {
+    // mappedStatement
+    MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
     System.err.println(invocation);
     return invocation.proceed();
   }
