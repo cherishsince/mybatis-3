@@ -94,6 +94,7 @@ public class CachingExecutor implements Executor {
   @Override
   public <E> List<E> query(MappedStatement ms, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql)
       throws SQLException {
+    // 耳机缓存
     // 获取缓存(xml里面<cache>标签)
     Cache cache = ms.getCache();
     if (cache != null) {
