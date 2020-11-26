@@ -1,4 +1,4 @@
-package org.apache.ibatis.mainTest;
+package cn.coget.test.mapper;
 
 import java.io.Serializable;
 

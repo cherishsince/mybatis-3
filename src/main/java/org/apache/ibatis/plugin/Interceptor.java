@@ -18,6 +18,8 @@ package org.apache.ibatis.plugin;
 import java.util.Properties;
 
 /**
+ * mybatis interceptor 插件扩展
+ *
  * @author Clinton Begin
  */
 public interface Interceptor {
@@ -25,6 +27,7 @@ public interface Interceptor {
   Object intercept(Invocation invocation) throws Throwable;
 
   default Object plugin(Object target) {
+    // 包装一下，返回一个 proxy
     return Plugin.wrap(target, this);
   }
 

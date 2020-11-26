@@ -643,35 +643,37 @@ public class Configuration {
     return MetaObject.forObject(object, objectFactory, objectWrapperFactory, reflectorFactory);
   }
 
-  public ParameterHandler newParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
-    ParameterHandler parameterHandler = mappedStatement.getLang().createParameterHandler(mappedStatement, parameterObject, boundSql);
-    parameterHandler = (ParameterHandler) interceptorChain.pluginAll(parameterHandler);
-    return parameterHandler;
-  }
+public ParameterHandler newParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
+  ParameterHandler parameterHandler = mappedStatement.getLang().createParameterHandler(mappedStatement, parameterObject, boundSql);
+  parameterHandler = (ParameterHandler) interceptorChain.pluginAll(parameterHandler);
+  return parameterHandler;
+}
 
-  public ResultSetHandler newResultSetHandler(Executor executor, MappedStatement mappedStatement, RowBounds rowBounds, ParameterHandler parameterHandler,
-      ResultHandler resultHandler, BoundSql boundSql) {
-    ResultSetHandler resultSetHandler = new DefaultResultSetHandler(executor, mappedStatement, parameterHandler, resultHandler, boundSql, rowBounds);
-    resultSetHandler = (ResultSetHandler) interceptorChain.pluginAll(resultSetHandler);
-    return resultSetHandler;
-  }
+public ResultSetHandler newResultSetHandler(Executor executor, MappedStatement mappedStatement, RowBounds rowBounds, ParameterHandler parameterHandler,
+    ResultHandler resultHandler, BoundSql boundSql) {
+  ResultSetHandler resultSetHandler = new DefaultResultSetHandler(executor, mappedStatement, parameterHandler, resultHandler, boundSql, rowBounds);
+  resultSetHandler = (ResultSetHandler) interceptorChain.pluginAll(resultSetHandler);
+  return resultSetHandler;
+}
 
-  public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
-    // 路由选择 StatementHandler
-    StatementHandler statementHandler = new RoutingStatementHandler(executor, mappedStatement, parameterObject, rowBounds, resultHandler, boundSql);
-    // 调用所有 plugin
-    statementHandler = (StatementHandler) interceptorChain.pluginAll(statementHandler);
-    return statementHandler;
-  }
+public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
+  // 路由选择 StatementHandler
+  StatementHandler statementHandler = new RoutingStatementHandler(executor, mappedStatement, parameterObject, rowBounds, resultHandler, boundSql);
+  // 调用所有 plugin
+  statementHandler = (StatementHandler) interceptorChain.pluginAll(statementHandler);
+  return statementHandler;
+}
 
   public Executor newExecutor(Transaction transaction) {
     return newExecutor(transaction, defaultExecutorType);
   }
 
   public Executor newExecutor(Transaction transaction, ExecutorType executorType) {
+    // 创建一个新的执行器
     executorType = executorType == null ? defaultExecutorType : executorType;
     executorType = executorType == null ? ExecutorType.SIMPLE : executorType;
     Executor executor;
+    // 批量的
     if (ExecutorType.BATCH == executorType) {
       executor = new BatchExecutor(this, transaction);
     } else if (ExecutorType.REUSE == executorType) {
@@ -679,9 +681,11 @@ public class Configuration {
     } else {
       executor = new SimpleExecutor(this, transaction);
     }
+    // 开启缓存 默认true
     if (cacheEnabled) {
       executor = new CachingExecutor(executor);
     }
+    // 插件(这是个 proxy)
     executor = (Executor) interceptorChain.pluginAll(executor);
     return executor;
   }

@@ -41,10 +41,12 @@ public class Plugin implements InvocationHandler {
   }
 
   public static Object wrap(Object target, Interceptor interceptor) {
+    // tips: 用于包装一个 plugin，的代理对象
     Map<Class<?>, Set<Method>> signatureMap = getSignatureMap(interceptor);
     Class<?> type = target.getClass();
     Class<?>[] interfaces = getAllInterfaces(type, signatureMap);
     if (interfaces.length > 0) {
+      // 创建 proxy 代理对象(Plugin)
       return Proxy.newProxyInstance(
           type.getClassLoader(),
           interfaces,

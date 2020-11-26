@@ -13,10 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.ibatis.mainTest;
+package cn.coget.test.mapper;
 
 import org.apache.ibatis.BaseDataTest;
-import org.apache.ibatis.cache.TransactionalCacheManager;
 import org.apache.ibatis.datasource.unpooled.UnpooledDataSource;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
@@ -54,11 +53,13 @@ public class ConfigurationRegisterMapperTest extends BaseDataTest {
     configuration.addMapper(UserMapper.class);
     SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(configuration);
     // 开启 sqlSession
-    SqlSession sqlSession = factory.openSession();
-    UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+    SqlSession sqlSession1 = factory.openSession();
+    SqlSession sqlSession2 = factory.openSession();
+    System.err.println(sqlSession1 == sqlSession2);
+    UserMapper userMapper = sqlSession1.getMapper(UserMapper.class);
     // 查询
-    UserDO userDO = userMapper.selectById(1L);
-    sqlSession.close();
-    System.err.println(userDO);
+    System.err.println(userMapper.selectById(1L));
+    System.err.println(userMapper.selectById(1L));
+    System.err.println(userMapper.selectById(1L));
   }
 }

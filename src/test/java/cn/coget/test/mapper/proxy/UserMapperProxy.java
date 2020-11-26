@@ -1,6 +1,6 @@
-package org.apache.ibatis.mainTest.proxy;
+package cn.coget.test.mapper.proxy;
 
-import org.apache.ibatis.mainTest.UserDO;
+import cn.coget.test.mapper.UserDO;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

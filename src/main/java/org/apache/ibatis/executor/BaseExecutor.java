@@ -65,7 +65,9 @@ public abstract class BaseExecutor implements Executor {
   protected BaseExecutor(Configuration configuration, Transaction transaction) {
     this.transaction = transaction;
     this.deferredLoads = new ConcurrentLinkedQueue<>();
+    // 这是一个永不过期缓存，id是给缓存去一个别名
     this.localCache = new PerpetualCache("LocalCache");
+    // 这是一个永不过期缓存，id是给缓存去一个别名
     this.localOutputParameterCache = new PerpetualCache("LocalOutputParameterCache");
     this.closed = false;
     this.configuration = configuration;
@@ -324,7 +326,8 @@ public abstract class BaseExecutor implements Executor {
     }
   }
 
-  private <E> List<E> queryFromDatabase(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql) throws SQLException {
+  private <E> List<E> queryFromDatabase(MappedStatement ms, Object parameter, RowBounds rowBounds,
+                                        ResultHandler resultHandler, CacheKey key, BoundSql boundSql) throws SQLException {
     List<E> list;
     // 添加一个 cache 占位
     localCache.putObject(key, EXECUTION_PLACEHOLDER);

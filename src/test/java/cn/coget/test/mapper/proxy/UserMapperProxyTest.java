@@ -1,6 +1,6 @@
-package org.apache.ibatis.mainTest.proxy;
+package cn.coget.test.mapper.proxy;
 
-import org.apache.ibatis.mainTest.UserMapper;
+import cn.coget.test.mapper.UserMapper;
 import org.junit.Test;
 
 import java.lang.reflect.Proxy;

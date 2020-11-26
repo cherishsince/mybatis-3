@@ -32,6 +32,10 @@
     <property name="url" value="jdbc:mysql://120.78.218.163:3306/storm_sports"/>
   </properties>
 
+  <plugins>
+    <plugin interceptor="cn.coget.test.mapper.plugin.SqlPrintPlugin"></plugin>
+  </plugins>
+
   <environments default="development">
     <environment id="development">
       <transactionManager type="JDBC">
@@ -46,8 +50,9 @@
     </environment>
   </environments>
 
+
   <mappers>
-    <mapper resource="org/apache/ibatis/mainTest/UserMapper.xml"/>
+    <mapper resource="cn/coget/test/mapper/UserMapper.xml"/>
   </mappers>
 
 </configuration>

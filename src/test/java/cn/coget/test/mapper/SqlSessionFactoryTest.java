@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.ibatis.mainTest;
+package cn.coget.test.mapper;
 
 import org.apache.ibatis.BaseDataTest;
 import org.apache.ibatis.io.Resources;
@@ -39,7 +39,7 @@ public class SqlSessionFactoryTest extends BaseDataTest {
     // 老师，这个还是帮我申请退学吧，我反馈的这个问题直接影响课程质量问题，给我的感觉（这也是我很不愿意说的）工作三年毕竟每个人的知识体系不一样。
     // 我们话一万多报一个班，肯定希望得到的是一个完整的知识体系的巩固和成长，课程标题都规划不好，我作为学员，我也会有怀疑（这也是我很不愿意说的）
 
-    try (Reader reader = Resources.getResourceAsReader("org/apache/ibatis/mainTest/mybatis-config.xml")) {
+    try (Reader reader = Resources.getResourceAsReader("cn/coget/test/mapper/mybatis-config.xml")) {
       this.sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
 //      sqlSessionFactory.getConfiguration().setLogImpl();
     }

@@ -20,6 +20,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * 拦截器调用链
+ *
  * @author Clinton Begin
  */
 public class InterceptorChain {
@@ -27,7 +29,9 @@ public class InterceptorChain {
   private final List<Interceptor> interceptors = new ArrayList<>();
 
   public Object pluginAll(Object target) {
+    // tip: 插件调用链
     for (Interceptor interceptor : interceptors) {
+      // 获取 interceptor 插件，返回一个 proxy 对象
       target = interceptor.plugin(target);
     }
     return target;
