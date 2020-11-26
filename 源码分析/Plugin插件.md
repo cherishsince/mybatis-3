@@ -52,6 +52,7 @@ public class ExamplePlugin implements Interceptor {
 
 - 需要实现 `interceptor`，使用注解 `@Intercepts` 指定应该怎么拦截，`@Signature` 就是具体的拦截规则。
 - 然后在 `mybatis-config.xml` 中配置 `<plugins>` , 注意：需要在`<environments>` 标签之前配置(`mybatis3.dtd` 配置文件规范)。
+- 注意注意：大家知道为什么 `@Signature` 注解 args 需要指定这两个参数吗？其实就是你拦截的 `method 也是 update` 他的参数类型，里面他会通过反射进行调用，所有需要参数类型，来确认是哪个 method，就这么简单。
 
 
 
@@ -154,10 +155,17 @@ public class Plugin implements InvocationHandler {
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     try {
+      // tip: 调用 Plugin Proxy对象 -> 根据对象的 method 获取方法的class
+      // tip: -> 根据Class获取需不需要拦截，需要拦截就调用 intercept 进行拦截处理
+
+      // 1、通过 method.getDeclaringClass() 获取，这个方法的 class
+      // 2、获取 @Intercepts @Signature 注解的信息
       Set<Method> methods = signatureMap.get(method.getDeclaringClass());
       if (methods != null && methods.contains(method)) {
+        // 拦截调用
         return interceptor.intercept(new Invocation(target, method, args));
       }
+      // 方法直接调用
       return method.invoke(target, args);
     } catch (Exception e) {
       throw ExceptionUtil.unwrapThrowable(e);
@@ -172,6 +180,8 @@ public class Plugin implements InvocationHandler {
 - `InterceptorChain` 是一个 **责任链**，里面是我们添加的 `plugin` 。
 
 - 重点在，`interceptor.plugin` 这个方法，里面创建了一个 `Plugin` ; `Plugin` 他是一个代理对象，实现了 `InvocationHandler` 这个接口。
+
+- invoke 方法这里比较有趣，每个 proxy 保存了注解解析的信息，也就是需要拦截的方法，在调用 proxy的时候，会进入 invoke，通过 method 反推 class，然后再判断是否需要拦截。
 
 - Execute、ParameterHandler、ResultSetHandler、StatementHandler 都会调用插件（具体都在实在 Configuration 里面）。
 
@@ -226,7 +236,6 @@ public class Plugin implements InvocationHandler {
 ##### Plugin创建
 
 ```java
-
 // Configuration
 public Executor newExecutor(Transaction transaction, ExecutorType executorType) {
     // 创建一个新的执行器
@@ -250,6 +259,40 @@ public Executor newExecutor(Transaction transaction, ExecutorType executorType) 
     return executor;
 }
 ```
+
+
+
+##### 插件解析注解
+
+```java
+// Plugin
+private static Map<Class<?>, Set<Method>> getSignatureMap(Interceptor interceptor) {
+  // 获取 Interceptor 的 @Intercepts 注解信息
+  Intercepts interceptsAnnotation = interceptor.getClass().getAnnotation(Intercepts.class);
+  // issue #251
+  if (interceptsAnnotation == null) {
+    throw new PluginException("No @Intercepts annotation was found in interceptor " + interceptor.getClass().getName());
+  }
+  // 获取 @Signature 签名信息
+  Signature[] sigs = interceptsAnnotation.value();
+  Map<Class<?>, Set<Method>> signatureMap = new HashMap<>();
+  // 每个 @Signature 都是一个 method
+  for (Signature sig : sigs) {
+    Set<Method> methods = signatureMap.computeIfAbsent(sig.type(), k -> new HashSet<>());
+    try {
+      Method method = sig.type().getMethod(sig.method(), sig.args());
+      methods.add(method);
+    } catch (NoSuchMethodException e) {
+      throw new PluginException("Could not find method on " + sig.type() + " named " + sig.method() + ". Cause: " + e, e);
+    }
+  }
+  return signatureMap;
+}
+```
+
+
+
+
 
 
 

@@ -32,6 +32,7 @@ public class Plugin implements InvocationHandler {
 
   private final Object target;
   private final Interceptor interceptor;
+  // 保存的是 @Intercepts @Signature 解析的信息
   private final Map<Class<?>, Set<Method>> signatureMap;
 
   private Plugin(Object target, Interceptor interceptor, Map<Class<?>, Set<Method>> signatureMap) {
@@ -42,6 +43,8 @@ public class Plugin implements InvocationHandler {
 
   public static Object wrap(Object target, Interceptor interceptor) {
     // tips: 用于包装一个 plugin，的代理对象
+
+    // 解析 @Intercepts @Signature 信息
     Map<Class<?>, Set<Method>> signatureMap = getSignatureMap(interceptor);
     Class<?> type = target.getClass();
     Class<?>[] interfaces = getAllInterfaces(type, signatureMap);
@@ -58,10 +61,17 @@ public class Plugin implements InvocationHandler {
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     try {
+      // tip: 调用 Plugin Proxy对象 -> 根据对象的 method 获取方法的class
+      // tip: -> 根据Class获取需不需要拦截，需要拦截就调用 intercept 进行拦截处理
+
+      // 1、通过 method.getDeclaringClass() 获取，这个方法的 class
+      // 2、获取 @Intercepts @Signature 注解的信息
       Set<Method> methods = signatureMap.get(method.getDeclaringClass());
       if (methods != null && methods.contains(method)) {
+        // 拦截调用
         return interceptor.intercept(new Invocation(target, method, args));
       }
+      // 方法直接调用
       return method.invoke(target, args);
     } catch (Exception e) {
       throw ExceptionUtil.unwrapThrowable(e);
@@ -69,13 +79,16 @@ public class Plugin implements InvocationHandler {
   }
 
   private static Map<Class<?>, Set<Method>> getSignatureMap(Interceptor interceptor) {
+    // 获取 Interceptor 的 @Intercepts 注解信息
     Intercepts interceptsAnnotation = interceptor.getClass().getAnnotation(Intercepts.class);
     // issue #251
     if (interceptsAnnotation == null) {
       throw new PluginException("No @Intercepts annotation was found in interceptor " + interceptor.getClass().getName());
     }
+    // 获取 @Signature 签名信息
     Signature[] sigs = interceptsAnnotation.value();
     Map<Class<?>, Set<Method>> signatureMap = new HashMap<>();
+    // 每个 @Signature 都是一个 method
     for (Signature sig : sigs) {
       Set<Method> methods = signatureMap.computeIfAbsent(sig.type(), k -> new HashSet<>());
       try {
