@@ -155,6 +155,7 @@ public abstract class BaseExecutor implements Executor {
     try {
       // 查询计数++
       queryStack++;
+      // 一级缓存
       // tip: localCache 是 PerpetualCache（永久缓存）
       list = resultHandler == null ? (List<E>) localCache.getObject(key) : null;
       if (list != null) {
