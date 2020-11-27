@@ -16,6 +16,10 @@
 package org.apache.ibatis.session;
 
 /**
+ * result context
+ *
+ * 用于处理的时候，上下文传递使用（和我们在日常通过 token 获取用户id一样）
+ *
  * @author Clinton Begin
  */
 public interface ResultContext<T> {

@@ -303,6 +303,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
       } else {
         if (resultHandler == null) {
           DefaultResultHandler defaultResultHandler = new DefaultResultHandler(objectFactory);
+          // 处理 row 行数据
           handleRowValues(rsw, resultMap, defaultResultHandler, rowBounds, null);
           multipleResults.add(defaultResultHandler.getResultList());
         } else {
@@ -330,6 +331,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
       checkResultHandler();
       handleRowValuesForNestedResultMap(rsw, resultMap, resultHandler, rowBounds, parentMapping);
     } else {
+      // 简单的处理，处理行数据
       handleRowValuesForSimpleResultMap(rsw, resultMap, resultHandler, rowBounds, parentMapping);
     }
   }
@@ -351,10 +353,17 @@ public class DefaultResultSetHandler implements ResultSetHandler {
 
   private void handleRowValuesForSimpleResultMap(ResultSetWrapper rsw, ResultMap resultMap, ResultHandler<?> resultHandler, RowBounds rowBounds, ResultMapping parentMapping)
       throws SQLException {
+    // 创建context，保存返回值解析
     DefaultResultContext<Object> resultContext = new DefaultResultContext<>();
+    // 这个是 jdbc 的 ResultSet 对象
     ResultSet resultSet = rsw.getResultSet();
+    // 忽略一些 jdbc 数据类型
     skipRows(resultSet, rowBounds);
+    // shouldProcessMoreRows(resultContext, rowBounds) 是否应该处理更多行数据
+    // resultSet.isClosed() 没有关闭的情况下
+    // resultSet.next() 还有下一条数据
     while (shouldProcessMoreRows(resultContext, rowBounds) && !resultSet.isClosed() && resultSet.next()) {
+      // 解析数据
       ResultMap discriminatedResultMap = resolveDiscriminatedResultMap(resultSet, resultMap, null);
       Object rowValue = getRowValue(rsw, discriminatedResultMap, null);
       storeObject(resultHandler, resultContext, rowValue, parentMapping, resultSet);
@@ -399,7 +408,9 @@ public class DefaultResultSetHandler implements ResultSetHandler {
 
   private Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap, String columnPrefix) throws SQLException {
     final ResultLoaderMap lazyLoader = new ResultLoaderMap();
+    // 这里是创建的返回对象，这个地方还没有对属性赋值
     Object rowValue = createResultObject(rsw, resultMap, lazyLoader, columnPrefix);
+    //
     if (rowValue != null && !hasTypeHandlerForResultObject(rsw, resultMap.getType())) {
       final MetaObject metaObject = configuration.newMetaObject(rowValue);
       boolean foundValues = this.useConstructorMappings;
@@ -632,6 +643,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
     this.useConstructorMappings = false; // reset previous mapping result
     final List<Class<?>> constructorArgTypes = new ArrayList<>();
     final List<Object> constructorArgs = new ArrayList<>();
+    // 创建 resultObject，就是 mapper 返回值类型（这里还没填充属性）
     Object resultObject = createResultObject(rsw, resultMap, constructorArgTypes, constructorArgs, columnPrefix);
     if (resultObject != null && !hasTypeHandlerForResultObject(rsw, resultMap.getType())) {
       final List<ResultMapping> propertyMappings = resultMap.getPropertyResultMappings();
