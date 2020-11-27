@@ -37,7 +37,9 @@ public class RoutingStatementHandler implements StatementHandler {
   private final StatementHandler delegate;
 
   public RoutingStatementHandler(Executor executor, MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
-
+//    1、STATEMENT:直接操作sql，不进行预编译，获取数据：$—Statement
+//    2、PREPARED:预处理，参数，进行预编译，获取数据：#—–PreparedStatement:默认
+//    3、CALLABLE:执行存储过程————CallableStatement
     switch (ms.getStatementType()) {
       case STATEMENT:
         delegate = new SimpleStatementHandler(executor, ms, parameter, rowBounds, resultHandler, boundSql);
