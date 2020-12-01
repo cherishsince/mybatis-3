@@ -29,6 +29,7 @@ import org.apache.ibatis.builder.BuilderException;
 public class ExpressionEvaluator {
 
   public boolean evaluateBoolean(String expression, Object parameterObject) {
+    // OgnlCache 是一个 MyBatis 缓存机制，避免二次解析，提高性能使用
     Object value = OgnlCache.getValue(expression, parameterObject);
     if (value instanceof Boolean) {
       return (Boolean) value;

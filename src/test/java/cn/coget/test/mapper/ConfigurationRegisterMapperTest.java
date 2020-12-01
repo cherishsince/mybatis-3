@@ -61,5 +61,8 @@ public class ConfigurationRegisterMapperTest extends BaseDataTest {
     System.err.println(userMapper.selectById(1L));
     System.err.println(userMapper.selectById(1L));
     System.err.println(userMapper.selectById(1L));
+    System.err.println(userMapper.selectById2(1L));
+    System.err.println(userMapper.selectById2(1L));
+    System.err.println(userMapper.selectById2(1L));
   }
 }

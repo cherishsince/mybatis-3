@@ -74,32 +74,34 @@ public class XMLScriptBuilder extends BaseBuilder {
     return sqlSource;
   }
 
-  protected MixedSqlNode parseDynamicTags(XNode node) {
-    List<SqlNode> contents = new ArrayList<>();
-    NodeList children = node.getNode().getChildNodes();
-    for (int i = 0; i < children.getLength(); i++) {
-      XNode child = node.newXNode(children.item(i));
-      if (child.getNode().getNodeType() == Node.CDATA_SECTION_NODE || child.getNode().getNodeType() == Node.TEXT_NODE) {
-        String data = child.getStringBody("");
-        TextSqlNode textSqlNode = new TextSqlNode(data);
-        if (textSqlNode.isDynamic()) {
-          contents.add(textSqlNode);
-          isDynamic = true;
-        } else {
-          contents.add(new StaticTextSqlNode(data));
-        }
-      } else if (child.getNode().getNodeType() == Node.ELEMENT_NODE) { // issue #628
-        String nodeName = child.getNode().getNodeName();
-        NodeHandler handler = nodeHandlerMap.get(nodeName);
-        if (handler == null) {
-          throw new BuilderException("Unknown element <" + nodeName + "> in SQL statement.");
-        }
-        handler.handleNode(child, contents);
+protected MixedSqlNode parseDynamicTags(XNode node) {
+  List<SqlNode> contents = new ArrayList<>();
+  NodeList children = node.getNode().getChildNodes();
+  for (int i = 0; i < children.getLength(); i++) {
+    XNode child = node.newXNode(children.item(i));
+    if (child.getNode().getNodeType() == Node.CDATA_SECTION_NODE || child.getNode().getNodeType() == Node.TEXT_NODE) {
+      String data = child.getStringBody("");
+      TextSqlNode textSqlNode = new TextSqlNode(data);
+      if (textSqlNode.isDynamic()) {
+        contents.add(textSqlNode);
         isDynamic = true;
+      } else {
+        contents.add(new StaticTextSqlNode(data));
       }
+    } else if (child.getNode().getNodeType() == Node.ELEMENT_NODE) { // issue #628
+      String nodeName = child.getNode().getNodeName();
+      // 是所有node处理器，如: if foreach 等...
+      NodeHandler handler = nodeHandlerMap.get(nodeName);
+      if (handler == null) {
+        throw new BuilderException("Unknown element <" + nodeName + "> in SQL statement.");
+      }
+      // 调用对应的 handler 处理
+      handler.handleNode(child, contents);
+      isDynamic = true;
     }
-    return new MixedSqlNode(contents);
   }
+  return new MixedSqlNode(contents);
+}
 
   private interface NodeHandler {
     void handleNode(XNode nodeToHandle, List<SqlNode> targetContents);

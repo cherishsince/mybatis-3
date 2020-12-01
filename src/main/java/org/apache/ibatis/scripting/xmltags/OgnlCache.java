@@ -39,7 +39,7 @@ public final class OgnlCache {
    */
   private static final OgnlMemberAccess MEMBER_ACCESS = new OgnlMemberAccess();
   /**
-   *
+   * class解析
    */
   private static final OgnlClassResolver CLASS_RESOLVER = new OgnlClassResolver();
   /**
