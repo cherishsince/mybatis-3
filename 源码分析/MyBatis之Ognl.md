@@ -218,4 +218,3 @@ protected MixedSqlNode parseDynamicTags(XNode node) {
 2. MyBatis  使用 Ognl 有缓存机制吗？
 
 3. MyBatis 缓存时间是多久?
-4. 
