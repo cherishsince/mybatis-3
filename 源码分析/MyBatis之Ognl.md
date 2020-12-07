@@ -216,5 +216,3 @@ protected MixedSqlNode parseDynamicTags(XNode node) {
 
 1. MyBatis 是怎么调用 Ognl 表达式的？
 2. MyBatis  使用 Ognl 有缓存机制吗？
-
-3. MyBatis 缓存时间是多久?
