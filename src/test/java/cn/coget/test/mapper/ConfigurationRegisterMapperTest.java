@@ -45,7 +45,7 @@ public class ConfigurationRegisterMapperTest extends BaseDataTest {
       "com.mysql.jdbc.Driver",
       "jdbc:mysql://120.78.218.163:3306/storm_sports",
       "root",
-      "@D23d7a3df91cc42"
+      "root"
     ));
     builder.transactionFactory(new JdbcTransactionFactory());
     configuration.setEnvironment(builder.build());
