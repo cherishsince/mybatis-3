@@ -31,38 +31,38 @@ import org.junit.Test;
  */
 public class ConfigurationRegisterMapperTest extends BaseDataTest {
 
-  @Before
-  public void setup() {
+    @Before
+    public void setup() {
 
-  }
+    }
 
-  @Test
-  public void configRegisterMapperTest() {
-    Configuration configuration = new Configuration();
-    // 构建 Environment
-    Environment.Builder builder = new Environment.Builder("11");
-    builder.dataSource(new UnpooledDataSource(
-      "com.mysql.jdbc.Driver",
-      "jdbc:mysql://120.78.218.163:3306/storm_sports",
-      "root",
-      "root"
-    ));
-    builder.transactionFactory(new JdbcTransactionFactory());
-    configuration.setEnvironment(builder.build());
-    // 添加 mapper
-    configuration.addMapper(UserMapper.class);
-    SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(configuration);
-    // 开启 sqlSession
-    SqlSession sqlSession1 = factory.openSession();
-    SqlSession sqlSession2 = factory.openSession();
-    System.err.println(sqlSession1 == sqlSession2);
-    UserMapper userMapper = sqlSession1.getMapper(UserMapper.class);
-    // 查询
-    System.err.println(userMapper.selectById(1L));
-    System.err.println(userMapper.selectById(1L));
-    System.err.println(userMapper.selectById(1L));
-    System.err.println(userMapper.selectById2(1L));
-    System.err.println(userMapper.selectById2(1L));
-    System.err.println(userMapper.selectById2(1L));
-  }
+    @Test
+    public void configRegisterMapperTest() {
+        Configuration configuration = new Configuration();
+        // 构建 Environment
+        Environment.Builder builder = new Environment.Builder("11");
+        builder.dataSource(new UnpooledDataSource(
+                "com.mysql.jdbc.Driver",
+                "jdbc:mysql://120.78.218.163:3306/storm_sports",
+                "root",
+                "root"
+        ));
+        builder.transactionFactory(new JdbcTransactionFactory());
+        configuration.setEnvironment(builder.build());
+        // 添加 mapper
+        configuration.addMapper(UserMapper.class);
+        SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(configuration);
+        // 开启 sqlSession
+        SqlSession sqlSession1 = factory.openSession();
+        SqlSession sqlSession2 = factory.openSession();
+        System.err.println(sqlSession1 == sqlSession2);
+        UserMapper userMapper = sqlSession1.getMapper(UserMapper.class);
+        // 查询
+        System.err.println(userMapper.selectById(1L));
+        System.err.println(userMapper.selectById(1L));
+        System.err.println(userMapper.selectById(1L));
+        System.err.println(userMapper.selectById2(1L));
+        System.err.println(userMapper.selectById2(1L));
+        System.err.println(userMapper.selectById2(1L));
+    }
 }

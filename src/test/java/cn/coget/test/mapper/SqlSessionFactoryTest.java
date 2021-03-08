@@ -31,42 +31,41 @@ import java.io.Reader;
  */
 public class SqlSessionFactoryTest extends BaseDataTest {
 
-  private SqlSessionFactory sqlSessionFactory = null;
+    private SqlSessionFactory sqlSessionFactory = null;
 
-  @Before
-  public void setup() throws IOException {
+    @Before
+    public void setup() throws IOException {
 
-    // 老师，这个还是帮我申请退学吧，我反馈的这个问题直接影响课程质量问题，给我的感觉（这也是我很不愿意说的）工作三年毕竟每个人的知识体系不一样。
-    // 我们话一万多报一个班，肯定希望得到的是一个完整的知识体系的巩固和成长，课程标题都规划不好，我作为学员，我也会有怀疑（这也是我很不愿意说的）
+        // 老师，这个还是帮我申请退学吧，我反馈的这个问题直接影响课程质量问题，给我的感觉（这也是我很不愿意说的）工作三年毕竟每个人的知识体系不一样。
+        // 我们话一万多报一个班，肯定希望得到的是一个完整的知识体系的巩固和成长，课程标题都规划不好，我作为学员，我也会有怀疑（这也是我很不愿意说的）
 
-    try (Reader reader = Resources.getResourceAsReader("cn/coget/test/mapper/mybatis-config.xml")) {
-      this.sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
-//      sqlSessionFactory.getConfiguration().setLogImpl();
-    }
-  }
-
-  @Test
-  public void selectTest() {
-    // 一级缓存.md
-    {
-      SqlSession sqlSession = sqlSessionFactory.openSession();
-      UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
-      UserDO userDO = userMapper.selectById(1L);
-      UserDO userDO2 = userMapper.selectById(1L);
-      System.err.println(userDO);
-      sqlSession.commit();
-      sqlSession.close();
+        try (Reader reader = Resources.getResourceAsReader("cn/coget/test/mapper/mybatis-config.xml")) {
+            this.sqlSessionFactory = new SqlSessionFactoryBuilder().build(reader);
+        }
     }
 
-    // 二级缓存.md
-    {
-      SqlSession sqlSession = sqlSessionFactory.openSession();
-      UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
-      UserDO userDO = userMapper.selectById(1L);
-      UserDO userDO2 = userMapper.selectById(1L);
-      System.err.println(userDO);
-      sqlSession.commit();
-      sqlSession.close();
+    @Test
+    public void selectTest() {
+        // 一级缓存.md
+        {
+            SqlSession sqlSession = sqlSessionFactory.openSession();
+            UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+            UserDO userDO = userMapper.selectById(1L);
+            UserDO userDO2 = userMapper.selectById(1L);
+            System.err.println(userDO);
+            sqlSession.commit();
+            sqlSession.close();
+        }
+
+        // 二级缓存.md
+        {
+            SqlSession sqlSession = sqlSessionFactory.openSession();
+            UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+            UserDO userDO = userMapper.selectById(1L);
+            UserDO userDO2 = userMapper.selectById(1L);
+            System.err.println(userDO);
+            sqlSession.commit();
+            sqlSession.close();
+        }
     }
-  }
 }

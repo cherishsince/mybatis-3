@@ -50,9 +50,7 @@
     </environment>
   </environments>
 
-
   <mappers>
     <mapper resource="cn/coget/test/mapper/UserMapper.xml"/>
   </mappers>
-
 </configuration>

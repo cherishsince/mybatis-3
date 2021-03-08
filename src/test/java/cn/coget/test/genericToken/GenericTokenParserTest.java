@@ -9,13 +9,13 @@ import java.util.Map;
 
 public class GenericTokenParserTest {
 
-  @Test
-  public void parseTest() {
-    GenericTokenParser tokenParser = new GenericTokenParser("#{", "}", content -> {
-      Map<String, String> values = new HashMap<>();
-      values.put("name", "大黄");
-      return values.get(content);
-    });
-    System.err.println(tokenParser.parse("SELECT * FROM name=#{name}"));
-  }
+    @Test
+    public void parseTest() {
+        GenericTokenParser tokenParser = new GenericTokenParser("#{", "}", content -> {
+            Map<String, String> values = new HashMap<>();
+            values.put("name", "大黄");
+            return values.get(content);
+        });
+        System.err.println(tokenParser.parse("SELECT * FROM name=#{name}"));
+    }
 }

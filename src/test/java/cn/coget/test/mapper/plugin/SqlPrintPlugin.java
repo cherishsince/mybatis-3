@@ -11,15 +11,15 @@ import org.apache.ibatis.session.RowBounds;
 
 
 @Intercepts({
-  @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class})
+        @Signature(type = Executor.class, method = "query", args = {MappedStatement.class, Object.class, RowBounds.class, ResultHandler.class})
 })
 public class SqlPrintPlugin implements Interceptor {
 
-  @Override
-  public Object intercept(Invocation invocation) throws Throwable {
-    // mappedStatement
-    MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
-    System.err.println(invocation);
-    return invocation.proceed();
-  }
+    @Override
+    public Object intercept(Invocation invocation) throws Throwable {
+        // mappedStatement
+        MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
+        System.err.println(invocation);
+        return invocation.proceed();
+    }
 }
